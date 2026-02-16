@@ -1,0 +1,42 @@
+{
+  "name": "archrips",
+  "version": "0.1.0",
+  "description": "Generate interactive architecture diagrams from your codebase using AI agents",
+  "type": "module",
+  "bin": {
+    "archrips": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && npm run copy-templates",
+    "copy-templates": "cp -r src/templates dist/ && cp -r src/schema dist/",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "architecture",
+    "diagram",
+    "code-analysis",
+    "react-flow",
+    "cli",
+    "ai"
+  ],
+  "author": "Yuto Ida",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ida29/archrips"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "^1.1.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "~5.8.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

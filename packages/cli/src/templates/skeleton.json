@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ida29/archrips/main/packages/cli/src/schema/architecture.schema.json",
+  "version": "1.0",
+  "project": {
+    "name": "",
+    "description": "",
+    "language": "",
+    "framework": "",
+    "sourceUrl": ""
+  },
+  "nodes": [],
+  "edges": [],
+  "useCases": [],
+  "schemas": {}
+}

@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ida29/archrips/main/packages/cli/src/schema/architecture.schema.json",
+  "title": "archrips Architecture Schema",
+  "description": "Schema for architecture.json used by archrips to generate interactive architecture diagrams",
+  "type": "object",
+  "required": ["version", "project", "nodes", "edges"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "project": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "description": "Project display name" },
+        "description": { "type": "string" },
+        "language": { "type": "string" },
+        "framework": { "type": "string" },
+        "sourceUrl": {
+          "type": "string",
+          "description": "URL template for source links. Use {filePath} as placeholder. Example: https://github.com/org/repo/blob/main/{filePath}"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    },
+    "useCases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/useCase" }
+    },
+    "schemas": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/tableSchema" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "category", "label", "layer"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "category": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string", "default": "" },
+        "filePath": { "type": "string", "default": "" },
+        "layer": { "type": "integer", "minimum": 0 },
+        "methods": { "type": "array", "items": { "type": "string" } },
+        "routes": { "type": "array", "items": { "type": "string" } },
+        "useCases": { "type": "array", "items": { "type": "string" } },
+        "schema": { "type": "string", "description": "Key into top-level schemas object" },
+        "implements": { "type": "string" },
+        "externalService": { "type": "string" },
+        "sqlExamples": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": ["source", "target"],
+      "properties": {
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "label": { "type": ["string", "null"] },
+        "type": {
+          "type": "string",
+          "enum": ["dependency", "implements", "relation"],
+          "default": "dependency"
+        }
+      },
+      "additionalProperties": false
+    },
+    "useCase": {
+      "type": "object",
+      "required": ["id", "name", "nodeIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string", "default": "" },
+        "nodeIds": { "type": "array", "items": { "type": "string" } },
+        "flow": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "tableSchema": {
+      "type": "object",
+      "required": ["tableName", "columns"],
+      "properties": {
+        "tableName": { "type": "string" },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "nullable": { "type": "boolean", "default": false },
+              "default": { "type": "string" },
+              "index": { "type": "string" },
+              "foreignKey": {
+                "type": "object",
+                "required": ["table", "column"],
+                "properties": {
+                  "table": { "type": "string" },
+                  "column": { "type": "string" },
+                  "onDelete": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "indexes": { "type": "array", "items": { "type": "string" } },
+        "enumValues": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
