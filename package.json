@@ -1,0 +1,17 @@
+{
+  "name": "archrips-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/cli",
+    "packages/viewer"
+  ],
+  "scripts": {
+    "build": "npm run build -w packages/cli",
+    "build:viewer": "npm run build -w packages/viewer",
+    "dev:viewer": "npm run dev -w packages/viewer",
+    "typecheck": "npm run typecheck -w packages/cli"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run *)",
+      "Bash(npx vite *)",
+      "Bash(npx tsc *)",
+      "Bash(node packages/cli/dist/*)"
+    ]
+  }
+}
