@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/ida29/archrips/main/packages/cli/src/schema/architecture.schema.json",
+  "$schema": "https://raw.githubusercontent.com/yida29/archrips/main/packages/cli/src/schema/architecture.schema.json",
   "version": "1.0",
   "project": {
     "name": "",

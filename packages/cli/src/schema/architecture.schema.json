@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ida29/archrips/main/packages/cli/src/schema/architecture.schema.json",
+  "$id": "https://raw.githubusercontent.com/yida29/archrips/main/packages/cli/src/schema/architecture.schema.json",
   "title": "archrips Architecture Schema",
   "description": "Schema for architecture.json used by archrips to generate interactive architecture diagrams",
   "type": "object",
