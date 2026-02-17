@@ -1,52 +1,52 @@
 # archrips
 
-Generate interactive architecture diagrams from your codebase using AI agents.
+Generate interactive architecture diagrams from your codebase using AI.
 
-archrips lets AI agents (Claude Code, Gemini CLI, Codex) analyze your codebase and produce a self-contained, interactive architecture viewer as static HTML — deployable anywhere.
+archrips lets Claude Code analyze your codebase and produce a self-contained, interactive architecture viewer as static HTML — deployable anywhere.
 
 ## Quick Start
 
 ```bash
-# 1. Initialize in your project
+# 1. Install the plugin
+/plugin marketplace add yida29/archrips
+/plugin install archrips@archrips
+
+# 2. Initialize in your project
 npx archrips init .
 
-# 2. Let your AI agent scan the codebase
-#    (Claude Code example — other agents work similarly)
-/archrips-scan
+# 3. Scan the codebase
+/archrips:scan
 
-# 3. Build static HTML
+# 4. Build & preview
 npx archrips build
-
-# 4. Preview
 npx archrips serve
 ```
 
 ## How It Works
 
-1. **`archrips init`** sets up `.archrips/` in your project and installs slash commands for your AI agent
-2. **`/archrips-scan`** — the AI reads your codebase and generates `.archrips/architecture.json`
-3. **`archrips build`** — validates the JSON, computes layout with dagre, and builds a static React Flow viewer
-4. **`archrips serve`** — serves the built HTML locally for preview
+1. **Install plugin** — `/plugin marketplace add yida29/archrips` registers the plugin, `/plugin install archrips@archrips` installs it
+2. **`archrips init`** — sets up `.archrips/` in your project
+3. **`/archrips:scan`** — Claude reads your codebase and docs, asks you to review the draft, then generates `.archrips/architecture.json`
+4. **`archrips build`** — validates the JSON, computes layout with dagre, and builds a static React Flow viewer
+5. **`archrips serve`** — serves the built HTML locally for preview
 
 The output is a standalone `dist/` folder you can deploy to GitHub Pages, Netlify, or share as a zip.
+
+## Skills
+
+| Skill | Description |
+|-------|-------------|
+| `/archrips:scan` | Full codebase scan — reads code & docs, presents draft for review, generates `architecture.json` |
+| `/archrips:update` | Incremental update based on `git diff` |
+| `/archrips:refine` | Interactive refinement (add/remove/modify nodes) |
 
 ## CLI Commands
 
 | Command | Description |
 |---------|-------------|
-| `archrips init [path]` | Initialize archrips in a project (default: `.`) |
-| `archrips build` | Build the architecture viewer to `.archrips/dist/` |
-| `archrips serve` | Preview the built viewer at `localhost:4173` |
-
-## Slash Commands (AI Agent Prompts)
-
-| Command | Description |
-|---------|-------------|
-| `/archrips-scan` | Full codebase scan → generate `architecture.json` |
-| `/archrips-update` | Incremental update based on `git diff` |
-| `/archrips-refine` | Interactive refinement (add/remove/modify nodes) |
-
-Supports: Claude Code (`.claude/commands/`), Gemini CLI (`.gemini/commands/`), Codex (`.codex/commands/`).
+| `npx archrips init [path]` | Initialize archrips in a project (default: `.`) |
+| `npx archrips build` | Build the architecture viewer to `.archrips/dist/` |
+| `npx archrips serve` | Preview the built viewer at `localhost:4173` |
 
 ## architecture.json Format
 
@@ -113,7 +113,7 @@ Custom categories are supported — they get a fallback color.
 
 ### Depth (Abstraction Level)
 
-The optional `depth` field (0–2) controls which nodes appear at each abstraction level. If omitted, it is auto-inferred from the category:
+The optional `depth` field (0-2) controls which nodes appear at each abstraction level. If omitted, it is auto-inferred from the category:
 
 | Depth | Label | Default Categories |
 |-------|-------|--------------------|
@@ -146,7 +146,7 @@ The `layer` field controls vertical positioning (dagre handles horizontal):
 
 ## Framework Support
 
-archrips is framework-agnostic. The AI agent adapts its analysis based on the detected framework:
+archrips is framework-agnostic. The AI adapts its analysis based on the detected framework:
 
 - **Laravel** — Controllers → Services → Ports → Adapters → Models
 - **Express/NestJS** — Routes/Controllers → Services → Repositories → Models
