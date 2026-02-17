@@ -31,9 +31,9 @@ npm run test:watch -w packages/cli
 ```bash
 npm run build
 cd /tmp && mkdir test-project && cd test-project
-node ~/work/archrip/packages/cli/dist/index.js init .
+mkdir -p .archrip
 cp ~/work/archrip/examples/laravel-kiyaku/architecture.json .archrip/
-node ~/work/archrip/packages/cli/dist/index.js build
+node ~/work/archrip/packages/cli/dist/index.js build   # viewer自動セットアップ
 node ~/work/archrip/packages/cli/dist/index.js serve
 ```
 
@@ -53,7 +53,7 @@ packages/
 │   ├── src/install/     # viewer, slash-commands
 │   ├── src/schema/      # architecture.schema.json
 │   └── src/templates/   # skeleton.json, slash-commands/{claude,gemini,codex}/
-└── viewer/       # React Flow ビューワー（init時にユーザーPJにコピー）
+└── viewer/       # React Flow ビューワー（build時に自動コピー）
     ├── src/components/  # ArchNode, DepthFilter, UseCaseFilter, DetailPanel, Legend
     ├── src/hooks/       # useArchitecture, useDepthFilter, useUseCaseFilter
     └── src/data/        # loader.ts

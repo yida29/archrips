@@ -11,13 +11,10 @@ archrip lets Claude Code analyze your codebase and produce a self-contained, int
 /plugin marketplace add yida29/archrip
 /plugin install archrip@archrip
 
-# 2. Initialize in your project
-npx archrip init .
-
-# 3. Scan the codebase
+# 2. Scan the codebase
 /archrip:scan
 
-# 4. Build & preview
+# 3. Build & preview
 npx archrip build
 npx archrip serve
 ```
@@ -25,10 +22,9 @@ npx archrip serve
 ## How It Works
 
 1. **Install plugin** — `/plugin marketplace add yida29/archrip` registers the plugin, `/plugin install archrip@archrip` installs it
-2. **`archrip init`** — sets up `.archrip/` in your project
-3. **`/archrip:scan`** — Claude reads your codebase and docs, asks you to review the draft, then generates `.archrip/architecture.json`
-4. **`archrip build`** — validates the JSON, computes layout with dagre, and builds a static React Flow viewer
-5. **`archrip serve`** — serves the built HTML locally for preview
+2. **`/archrip:scan`** — Claude reads your codebase and docs, asks you to review the draft, then generates `.archrip/architecture.json`
+3. **`archrip build`** — validates the JSON, auto-installs the viewer if needed, computes layout with dagre, and builds a static React Flow viewer
+4. **`archrip serve`** — serves the built HTML locally for preview
 
 The output is a standalone `dist/` folder you can deploy to GitHub Pages, Netlify, or share as a zip.
 
@@ -44,8 +40,8 @@ The output is a standalone `dist/` folder you can deploy to GitHub Pages, Netlif
 
 | Command | Description |
 |---------|-------------|
-| `npx archrip init [path]` | Initialize archrip in a project (default: `.`) |
-| `npx archrip build` | Build the architecture viewer to `.archrip/dist/` |
+| `npx archrip init [path]` | Initialize archrip in a project (optional — `build` auto-setups the viewer) |
+| `npx archrip build` | Build the architecture viewer to `.archrip/dist/` (auto-installs viewer if needed) |
 | `npx archrip serve` | Preview the built viewer at `localhost:4173` |
 
 ## architecture.json Format
