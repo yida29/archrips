@@ -1,0 +1,10 @@
+{
+  "workspaces": {
+    "packages/cli": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/viewer": {
+      "project": ["src/**/*.{ts,tsx}"]
+    }
+  }
+}

@@ -9,9 +9,13 @@
     "build": "npm run build -w packages/cli",
     "build:viewer": "npm run build -w packages/viewer",
     "dev:viewer": "npm run dev -w packages/viewer",
-    "typecheck": "npm run typecheck -w packages/cli"
+    "typecheck": "npm run typecheck -w packages/cli",
+    "knip": "knip"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "knip": "^5.83.1"
   }
 }

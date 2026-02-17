@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "group:monorepos",
+    "group:recommended",
+    ":separateMajorReleases"
+  ],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "Group non-major devDependency updates",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "devDependencies (non-major)"
+    },
+    {
+      "description": "Automerge non-major updates",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Respect TypeScript tilde pins",
+      "matchPackageNames": ["typescript"],
+      "rangeStrategy": "pin"
+    }
+  ]
+}
