@@ -1,5 +1,6 @@
 import type { Edge } from '@xyflow/react';
-import type { ArchFlowNode, ArchNodeData, UseCase, TableSchema } from '../types.ts';
+import type { ArchFlowNode, ArchNodeData, UseCase, TableSchema, DepthLevel } from '../types.ts';
+import { getDefaultDepth } from '../types.ts';
 
 interface RawArchData {
   version: string;
@@ -31,6 +32,7 @@ interface RawNode {
   implements?: string;
   externalService?: string;
   sqlExamples?: string[];
+  depth?: number;
 }
 
 interface RawEdge {
@@ -89,6 +91,7 @@ export async function loadArchitecture(): Promise<LoadedArchitecture> {
     const data: ArchNodeData = {
       label: n.label,
       category: n.category,
+      depth: (n.depth ?? getDefaultDepth(n.category)) as DepthLevel,
       description: n.description ?? '',
       filePath: n.filePath ?? '',
       sourceUrl: resolveSourceUrl(sourceUrlTemplate, n.filePath ?? ''),

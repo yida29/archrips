@@ -9,7 +9,7 @@ export function useUseCaseFilter(nodes: ArchFlowNode[], edges: Edge[], useCases:
   const categories = useMemo(() => {
     const set = new Set<string>();
     for (const node of nodes) {
-      set.add(node.data.category);
+      if (!node.hidden) set.add(node.data.category);
     }
     return Array.from(set);
   }, [nodes]);
@@ -19,14 +19,17 @@ export function useUseCaseFilter(nodes: ArchFlowNode[], edges: Edge[], useCases:
     const uc = useCases.find((u) => u.id === selectedUseCase);
     if (!uc) return nodes;
     const activeIds = new Set(uc.nodeIds);
-    return nodes.map((node) => ({
-      ...node,
-      style: {
-        ...node.style,
-        opacity: activeIds.has(node.id) ? 1 : 0.15,
-        transition: 'opacity 0.3s',
-      },
-    }));
+    return nodes.map((node) => {
+      if (node.hidden) return node;
+      return {
+        ...node,
+        style: {
+          ...node.style,
+          opacity: activeIds.has(node.id) ? 1 : 0.15,
+          transition: 'opacity 0.3s',
+        },
+      };
+    });
   }, [nodes, selectedUseCase, useCases]);
 
   const filteredEdges = useMemo(() => {

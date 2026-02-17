@@ -1,3 +1,23 @@
+// ─── Depth system ───
+
+export type DepthLevel = 0 | 1 | 2;
+
+const CATEGORY_DEPTH: Record<string, DepthLevel> = {
+  controller: 0, external: 0,
+  service: 1, port: 1, adapter: 1, job: 1,
+  model: 2, dto: 2,
+};
+
+export function getDefaultDepth(category: string): DepthLevel {
+  return CATEGORY_DEPTH[category] ?? 1;
+}
+
+export const DEPTH_LEVELS = [
+  { level: 0 as const, label: 'Overview' },
+  { level: 1 as const, label: 'Structure' },
+  { level: 2 as const, label: 'Detail' },
+] as const;
+
 // ─── Category system ───
 // Standard 8 categories. Custom categories are allowed — they get a fallback color.
 
@@ -72,6 +92,7 @@ export interface ArchNodeData {
   [key: string]: unknown;
   label: string;
   category: string;
+  depth: DepthLevel;
   description: string;
   filePath: string;
   sourceUrl: string;

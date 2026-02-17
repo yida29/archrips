@@ -13,15 +13,18 @@ import { getCategoryColors } from './types.ts';
 import { ArchNode } from './components/nodes/ArchNode.tsx';
 import { DetailPanel } from './components/DetailPanel.tsx';
 import { UseCaseFilter } from './components/UseCaseFilter.tsx';
+import { DepthFilter } from './components/DepthFilter.tsx';
 import { Legend } from './components/Legend.tsx';
 import { useArchitecture } from './hooks/useArchitecture.ts';
+import { useDepthFilter } from './hooks/useDepthFilter.ts';
 import { useUseCaseFilter } from './hooks/useUseCaseFilter.ts';
 
 const nodeTypes = { archNode: ArchNode };
 
 export default function App() {
   const { nodes, edges, useCases, projectName, loading, error, onNodesChange, onEdgesChange } = useArchitecture();
-  const { selectedUseCase, setSelectedUseCase, categories, filteredNodes, filteredEdges } = useUseCaseFilter(nodes, edges, useCases);
+  const { depthLevel, setDepthLevel, visibleNodes, visibleEdges } = useDepthFilter(nodes, edges);
+  const { selectedUseCase, setSelectedUseCase, categories, filteredNodes, filteredEdges } = useUseCaseFilter(visibleNodes, visibleEdges, useCases);
   const [selectedNodeData, setSelectedNodeData] = useState<ArchNodeData | null>(null);
 
   const onNodeClick: NodeMouseHandler<ArchFlowNode> = useCallback((_event, node) => {
@@ -88,13 +91,16 @@ export default function App() {
         />
       </ReactFlow>
 
-      {useCases.length > 0 && (
-        <UseCaseFilter
-          useCases={useCases}
-          selectedUseCase={selectedUseCase}
-          onSelect={handleUseCaseSelect}
-        />
-      )}
+      <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+        {useCases.length > 0 && (
+          <UseCaseFilter
+            useCases={useCases}
+            selectedUseCase={selectedUseCase}
+            onSelect={handleUseCaseSelect}
+          />
+        )}
+        <DepthFilter depthLevel={depthLevel} onSelect={setDepthLevel} />
+      </div>
       <Legend categories={categories} />
 
       {/* Title */}

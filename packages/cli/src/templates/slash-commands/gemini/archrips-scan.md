@@ -49,6 +49,7 @@ Write the complete `.archrips/architecture.json` following the schema.
 - `layer`: 0=external, 1=entry points, 2=application logic, 3=abstractions, 4=implementations, 5=data
 - `category`: one of controller, service, port, adapter, model, external, job, dto (or custom)
 - `filePath`: relative from project root
+- `depth` (optional): 0=overview (boundary), 1=structure (internal), 2=detail (implementation). Auto-inferred from category if omitted
 - `useCases`: array of use case IDs this node participates in
 
 ### Edge Rules

@@ -8,7 +8,7 @@ interface UseCaseFilterProps {
 
 export function UseCaseFilter({ useCases, selectedUseCase, onSelect }: UseCaseFilterProps) {
   return (
-    <div className="absolute top-3 left-3 z-10 bg-white rounded-lg shadow-md border border-gray-200 p-3 w-64">
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3 w-64">
       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
         Use Case Filter
       </h3>

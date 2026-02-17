@@ -61,7 +61,8 @@
         "schema": { "type": "string", "description": "Key into top-level schemas object" },
         "implements": { "type": "string" },
         "externalService": { "type": "string" },
-        "sqlExamples": { "type": "array", "items": { "type": "string" } }
+        "sqlExamples": { "type": "array", "items": { "type": "string" } },
+        "depth": { "type": "integer", "minimum": 0, "maximum": 2, "description": "Abstraction depth: 0=overview (boundary), 1=structure (internal), 2=detail (implementation). Auto-inferred from category if omitted." }
       },
       "additionalProperties": false
     },
