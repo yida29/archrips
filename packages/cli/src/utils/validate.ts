@@ -78,7 +78,7 @@ export interface ValidationError {
 export function validateViewerDir(viewerDir: string): void {
   if (!existsSync(viewerDir)) {
     throw new Error(
-      '.archrip/viewer/ not found.\nRun `npx archrip init .` to set up the viewer.',
+      '.archrip/viewer/ not found.\nRun `npx archrip build` to auto-setup the viewer.',
     );
   }
 
@@ -87,7 +87,7 @@ export function validateViewerDir(viewerDir: string): void {
     throw new Error(
       '.archrip/viewer/ is a symbolic link, which is not allowed.\n'
       + 'This is a safety check to prevent executing code outside the project.\n'
-      + 'Remove the symlink and re-run `npx archrip init .`.',
+      + 'Remove the symlink and re-run `npx archrip build`.',
     );
   }
 
@@ -108,7 +108,7 @@ export function validateViewerDir(viewerDir: string): void {
     throw new Error(
       '.archrip/viewer/ does not appear to be an official archrip viewer.\n'
       + 'This is a safety check to prevent executing untrusted code.\n'
-      + 'Re-run `npx archrip init .` to reinstall the viewer.',
+      + 'Remove .archrip/viewer/ and re-run `npx archrip build` to reinstall.',
     );
   }
 
@@ -117,7 +117,7 @@ export function validateViewerDir(viewerDir: string): void {
   if (!existsSync(pkgJsonPath)) {
     throw new Error(
       '.archrip/viewer/package.json not found.\n'
-      + 'Re-run `npx archrip init .` to reinstall the viewer.',
+      + 'Remove .archrip/viewer/ and re-run `npx archrip build` to reinstall.',
     );
   }
   const pkg = JSON.parse(readFileSync(pkgJsonPath, 'utf-8')) as Record<string, unknown>;
@@ -125,7 +125,7 @@ export function validateViewerDir(viewerDir: string): void {
     throw new Error(
       '.archrip/viewer/package.json has unexpected name.\n'
       + 'This is a safety check to prevent executing untrusted code.\n'
-      + 'Re-run `npx archrip init .` to reinstall the viewer.',
+      + 'Remove .archrip/viewer/ and re-run `npx archrip build` to reinstall.',
     );
   }
 }

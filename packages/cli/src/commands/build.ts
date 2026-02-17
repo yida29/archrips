@@ -4,6 +4,8 @@ import { execSync } from 'node:child_process';
 import { loadAndValidate, validateViewerDir } from '../utils/validate.js';
 import type { ArchitectureData } from '../utils/validate.js';
 import { computeLayout } from '../utils/layout.js';
+import { installViewer } from '../install/viewer.js';
+import { updateGitignore } from '../utils/gitignore.js';
 
 function writeProcessedArchitecture(
   viewerDir: string,
@@ -62,11 +64,17 @@ export async function build(): Promise<void> {
   if (!existsSync(archJsonPath)) {
     throw new Error(
       '.archrip/architecture.json not found.\n'
-      + 'Run `npx archrip init .` first, then use /archrip-scan to generate data.',
+      + 'Run /archrip:scan (or /archrip-scan) to generate it.',
     );
   }
 
-  // 2. Check viewer exists and verify it was created by archrip init
+  // 2. Auto-setup viewer if not present
+  if (!existsSync(viewerDir)) {
+    console.log('Setting up viewer...');
+    mkdirSync(archripDir, { recursive: true });
+    installViewer(archripDir);
+    updateGitignore(projectDir);
+  }
   validateViewerDir(viewerDir);
 
   // 3. Validate architecture.json

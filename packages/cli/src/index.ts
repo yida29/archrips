@@ -48,10 +48,9 @@ Options:
   -h, --help              Show this help
 
 Workflow:
-  1. npx archrip init .          # Setup project + install slash commands
-  2. /archrip-scan               # AI scans codebase → architecture.json
-  3. npx archrip build           # Build static HTML viewer
-  4. npx archrip serve           # Preview in browser
+  1. /archrip:scan               # AI scans codebase → architecture.json
+  2. npx archrip build           # Build static HTML viewer (auto-installs viewer)
+  3. npx archrip serve           # Preview in browser
 `);
 }
 

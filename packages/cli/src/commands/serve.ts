@@ -9,14 +9,14 @@ export async function serve(): Promise<void> {
   const distDir = join(projectDir, '.archrip', 'dist');
   const viewerDir = join(projectDir, '.archrip', 'viewer');
 
-  // Verify viewer origin before executing anything in that directory
-  validateViewerDir(viewerDir);
-
-  // Auto-build if dist doesn't exist
+  // Auto-build if dist doesn't exist (build auto-installs viewer if needed)
   if (!existsSync(join(distDir, 'index.html'))) {
     console.log('No build found. Running build first...\n');
     await build();
   }
+
+  // Verify viewer origin before executing anything in that directory
+  validateViewerDir(viewerDir);
 
   console.log('\narchrip serve — Starting preview server...\n');
 
