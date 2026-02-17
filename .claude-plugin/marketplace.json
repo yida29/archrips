@@ -1,0 +1,20 @@
+{
+  "name": "archrips",
+  "owner": { "name": "Yuto Ida" },
+  "metadata": {
+    "description": "Architecture diagram generation tools"
+  },
+  "plugins": [
+    {
+      "name": "archrips",
+      "source": "./",
+      "description": "Generate interactive architecture diagrams from your codebase",
+      "version": "0.1.0",
+      "author": { "name": "Yuto Ida" },
+      "homepage": "https://github.com/yida29/archrips",
+      "license": "MIT",
+      "keywords": ["architecture", "diagrams", "visualization"],
+      "category": "development"
+    }
+  ]
+}
