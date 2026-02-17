@@ -1,47 +1,48 @@
 // ─── Category system ───
 // Standard 8 categories. Custom categories are allowed — they get a fallback color.
 
-export const STANDARD_CATEGORIES = [
-  'controller', 'service', 'port', 'adapter', 'model', 'external', 'job', 'dto',
-] as const;
-
-export type StandardCategory = typeof STANDARD_CATEGORIES[number];
-
 export interface CategoryStyle {
   bg: string;
   border: string;
   text: string;
 }
 
-const STANDARD_COLORS: Record<StandardCategory, CategoryStyle> = {
-  controller: { bg: '#dbeafe', border: '#3b82f6', text: '#1e40af' },
-  service:    { bg: '#dcfce7', border: '#22c55e', text: '#166534' },
-  port:       { bg: '#ede9fe', border: '#8b5cf6', text: '#5b21b6' },
-  adapter:    { bg: '#ffedd5', border: '#f97316', text: '#9a3412' },
-  model:      { bg: '#fee2e2', border: '#ef4444', text: '#991b1b' },
-  external:   { bg: '#f3f4f6', border: '#6b7280', text: '#374151' },
-  job:        { bg: '#fef9c3', border: '#eab308', text: '#854d0e' },
-  dto:        { bg: '#cffafe', border: '#06b6d4', text: '#155e75' },
-};
+interface CategoryMeta {
+  label: string;
+  icon: string;
+  color: CategoryStyle;
+}
 
-const FALLBACK_COLOR: CategoryStyle = { bg: '#f5f5f4', border: '#a8a29e', text: '#44403c' };
+const CATEGORY_META = {
+  controller: { label: 'Controller', icon: '\u{1F310}', color: { bg: '#dbeafe', border: '#3b82f6', text: '#1e40af' } },
+  service:    { label: 'Service',    icon: '\u{2699}\u{FE0F}', color: { bg: '#dcfce7', border: '#22c55e', text: '#166534' } },
+  port:       { label: 'Port',       icon: '\u{1F50C}', color: { bg: '#ede9fe', border: '#8b5cf6', text: '#5b21b6' } },
+  adapter:    { label: 'Adapter',    icon: '\u{1F527}', color: { bg: '#ffedd5', border: '#f97316', text: '#9a3412' } },
+  model:      { label: 'Model / DB', icon: '\u{1F4BE}', color: { bg: '#fee2e2', border: '#ef4444', text: '#991b1b' } },
+  external:   { label: 'External',   icon: '\u{2601}\u{FE0F}', color: { bg: '#f3f4f6', border: '#6b7280', text: '#374151' } },
+  job:        { label: 'Job',        icon: '\u{23F0}', color: { bg: '#fef9c3', border: '#eab308', text: '#854d0e' } },
+  dto:        { label: 'DTO',        icon: '\u{1F4E6}', color: { bg: '#cffafe', border: '#06b6d4', text: '#155e75' } },
+} as const satisfies Record<string, CategoryMeta>;
+
+export type StandardCategory = keyof typeof CATEGORY_META;
+
+const FALLBACK_META: CategoryMeta = { label: '', icon: '\u{1F4C4}', color: { bg: '#f5f5f4', border: '#a8a29e', text: '#44403c' } };
+
+function getMeta(category: string): CategoryMeta {
+  return CATEGORY_META[category as StandardCategory] ?? FALLBACK_META;
+}
 
 export function getCategoryColors(category: string): CategoryStyle {
-  return STANDARD_COLORS[category as StandardCategory] ?? FALLBACK_COLOR;
+  return getMeta(category).color;
 }
 
 export function getCategoryLabel(category: string): string {
-  const labels: Record<StandardCategory, string> = {
-    controller: 'Controller',
-    service:    'Service',
-    port:       'Port',
-    adapter:    'Adapter',
-    model:      'Model / DB',
-    external:   'External',
-    job:        'Job',
-    dto:        'DTO',
-  };
-  return labels[category as StandardCategory] ?? category.charAt(0).toUpperCase() + category.slice(1);
+  const meta = getMeta(category);
+  return meta.label || category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+export function getCategoryIcon(category: string): string {
+  return getMeta(category).icon;
 }
 
 // ─── React Flow node type alias ───
@@ -49,6 +50,7 @@ export function getCategoryLabel(category: string): string {
 import type { Node } from '@xyflow/react';
 
 // ─── Data types ───
+// Keep in sync with packages/cli/src/utils/validate.ts (ColumnSchema, TableSchema)
 
 export interface ColumnSchema {
   name: string;

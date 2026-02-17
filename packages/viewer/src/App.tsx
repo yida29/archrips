@@ -1,94 +1,28 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   Background,
   Controls,
   MiniMap,
-  useNodesState,
-  useEdgesState,
 } from '@xyflow/react';
-import type { Edge, NodeMouseHandler } from '@xyflow/react';
+import type { NodeMouseHandler } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import type { ArchFlowNode, ArchNodeData, UseCase } from './types.ts';
+import type { ArchFlowNode, ArchNodeData } from './types.ts';
 import { getCategoryColors } from './types.ts';
-import { loadArchitecture } from './data/loader.ts';
 import { ArchNode } from './components/nodes/ArchNode.tsx';
 import { DetailPanel } from './components/DetailPanel.tsx';
 import { UseCaseFilter } from './components/UseCaseFilter.tsx';
 import { Legend } from './components/Legend.tsx';
+import { useArchitecture } from './hooks/useArchitecture.ts';
+import { useUseCaseFilter } from './hooks/useUseCaseFilter.ts';
 
 const nodeTypes = { archNode: ArchNode };
 
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState<ArchFlowNode>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const [useCases, setUseCases] = useState<UseCase[]>([]);
-  const [projectName, setProjectName] = useState('Architecture Viewer');
+  const { nodes, edges, useCases, projectName, loading, error, onNodesChange, onEdgesChange } = useArchitecture();
+  const { selectedUseCase, setSelectedUseCase, categories, filteredNodes, filteredEdges } = useUseCaseFilter(nodes, edges, useCases);
   const [selectedNodeData, setSelectedNodeData] = useState<ArchNodeData | null>(null);
-  const [selectedUseCase, setSelectedUseCase] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Load architecture.json on mount
-  useEffect(() => {
-    loadArchitecture()
-      .then((arch) => {
-        setNodes(arch.nodes);
-        setEdges(arch.edges);
-        setUseCases(arch.useCases);
-        setProjectName(arch.projectName);
-        setLoading(false);
-      })
-      .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : 'Failed to load architecture.json');
-        setLoading(false);
-      });
-  }, [setNodes, setEdges]);
-
-  // Collect unique categories from loaded data for the legend
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    for (const node of nodes) {
-      set.add(node.data.category);
-    }
-    return Array.from(set);
-  }, [nodes]);
-
-  // Apply use case filter
-  const filteredNodes = useMemo(() => {
-    if (!selectedUseCase) return nodes;
-    const uc = useCases.find((u) => u.id === selectedUseCase);
-    if (!uc) return nodes;
-    const activeIds = new Set(uc.nodeIds);
-    return nodes.map((node) => ({
-      ...node,
-      style: {
-        ...node.style,
-        opacity: activeIds.has(node.id) ? 1 : 0.15,
-        transition: 'opacity 0.3s',
-      },
-    }));
-  }, [nodes, selectedUseCase, useCases]);
-
-  const filteredEdges = useMemo(() => {
-    if (!selectedUseCase) return edges;
-    const uc = useCases.find((u) => u.id === selectedUseCase);
-    if (!uc) return edges;
-    const activeIds = new Set(uc.nodeIds);
-    return edges.map((edge) => ({
-      ...edge,
-      style: {
-        ...edge.style,
-        opacity: activeIds.has(edge.source) && activeIds.has(edge.target) ? 1 : 0.08,
-        transition: 'opacity 0.3s',
-      },
-      labelStyle: {
-        ...((edge.labelStyle as Record<string, unknown>) ?? {}),
-        opacity: activeIds.has(edge.source) && activeIds.has(edge.target) ? 1 : 0,
-      },
-    }));
-  }, [edges, selectedUseCase, useCases]);
 
   const onNodeClick: NodeMouseHandler<ArchFlowNode> = useCallback((_event, node) => {
     setSelectedNodeData(node.data);
@@ -100,12 +34,12 @@ export default function App() {
 
   const handleUseCaseSelect = useCallback((ucId: string | null) => {
     setSelectedUseCase(ucId);
-  }, []);
+  }, [setSelectedUseCase]);
 
   const handleUseCaseClickFromPanel = useCallback((ucId: string) => {
     setSelectedUseCase(ucId);
     setSelectedNodeData(null);
-  }, []);
+  }, [setSelectedUseCase]);
 
   if (loading) {
     return (

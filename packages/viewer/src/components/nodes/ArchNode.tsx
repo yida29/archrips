@@ -1,23 +1,12 @@
 import { Handle, Position } from '@xyflow/react';
 import type { NodeProps } from '@xyflow/react';
 import type { ArchFlowNode } from '../../types.ts';
-import { getCategoryColors } from '../../types.ts';
-
-const CATEGORY_ICONS: Record<string, string> = {
-  controller: '\u{1F310}',
-  service: '\u{2699}\u{FE0F}',
-  port: '\u{1F50C}',
-  adapter: '\u{1F527}',
-  model: '\u{1F4BE}',
-  external: '\u{2601}\u{FE0F}',
-  job: '\u{23F0}',
-  dto: '\u{1F4E6}',
-};
+import { getCategoryColors, getCategoryIcon } from '../../types.ts';
 
 export function ArchNode({ data, selected }: NodeProps<ArchFlowNode>) {
   const d = data;
   const colors = getCategoryColors(d.category);
-  const icon = CATEGORY_ICONS[d.category] ?? '\u{1F4C4}';
+  const icon = getCategoryIcon(d.category);
 
   return (
     <>
