@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useQueryState, parseAsString } from 'nuqs';
 import type { Edge } from '@xyflow/react';
 
 import type { ArchFlowNode, UseCase } from '../types.ts';
 
 export function useUseCaseFilter(nodes: ArchFlowNode[], edges: Edge[], useCases: UseCase[]) {
-  const [selectedUseCase, setSelectedUseCase] = useState<string | null>(null);
+  const [selectedUseCase, setSelectedUseCase] = useQueryState('uc', parseAsString.withOptions({ history: 'replace' }));
 
   const categories = useMemo(() => {
     const set = new Set<string>();

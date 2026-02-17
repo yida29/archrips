@@ -1,10 +1,22 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useQueryState, parseAsInteger } from 'nuqs';
 import type { Edge } from '@xyflow/react';
 
 import type { ArchFlowNode, DepthLevel } from '../types.ts';
 
+function clampDepth(value: number): DepthLevel {
+  if (value <= 0) return 0;
+  if (value >= 2) return 2;
+  return value as DepthLevel;
+}
+
 export function useDepthFilter(nodes: ArchFlowNode[], edges: Edge[]) {
-  const [depthLevel, setDepthLevel] = useState<DepthLevel>(2);
+  const [rawDepth, setRawDepth] = useQueryState('depth', parseAsInteger.withDefault(2).withOptions({ history: 'replace' }));
+  const depthLevel = clampDepth(rawDepth);
+
+  const setDepthLevel = (level: DepthLevel) => {
+    void setRawDepth(level);
+  };
 
   const visibleNodes = useMemo(
     () => nodes.map((node) => ({ ...node, hidden: node.data.depth > depthLevel })),

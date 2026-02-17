@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   ReactFlow,
   Background,
@@ -6,6 +6,7 @@ import {
   MiniMap,
 } from '@xyflow/react';
 import type { NodeMouseHandler } from '@xyflow/react';
+import { useQueryState, parseAsString } from 'nuqs';
 import '@xyflow/react/dist/style.css';
 
 import type { ArchFlowNode, ArchNodeData } from './types.ts';
@@ -15,9 +16,11 @@ import { DetailPanel } from './components/DetailPanel.tsx';
 import { UseCaseFilter } from './components/UseCaseFilter.tsx';
 import { DepthFilter } from './components/DepthFilter.tsx';
 import { Legend } from './components/Legend.tsx';
+import { ThemeToggle } from './components/ThemeToggle.tsx';
 import { useArchitecture } from './hooks/useArchitecture.ts';
 import { useDepthFilter } from './hooks/useDepthFilter.ts';
 import { useUseCaseFilter } from './hooks/useUseCaseFilter.ts';
+import { useTheme } from './hooks/useTheme.ts';
 
 const nodeTypes = { archNode: ArchNode };
 
@@ -25,28 +28,35 @@ export default function App() {
   const { nodes, edges, useCases, projectName, loading, error, onNodesChange, onEdgesChange } = useArchitecture();
   const { depthLevel, setDepthLevel, visibleNodes, visibleEdges } = useDepthFilter(nodes, edges);
   const { selectedUseCase, setSelectedUseCase, categories, filteredNodes, filteredEdges } = useUseCaseFilter(visibleNodes, visibleEdges, useCases);
-  const [selectedNodeData, setSelectedNodeData] = useState<ArchNodeData | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useQueryState('node', parseAsString.withOptions({ history: 'replace' }));
+  const { theme, toggleTheme } = useTheme();
+
+  const selectedNodeData: ArchNodeData | null = useMemo(() => {
+    if (!selectedNodeId) return null;
+    const found = nodes.find((n) => n.id === selectedNodeId);
+    return found?.data ?? null;
+  }, [selectedNodeId, nodes]);
 
   const onNodeClick: NodeMouseHandler<ArchFlowNode> = useCallback((_event, node) => {
-    setSelectedNodeData(node.data);
-  }, []);
+    void setSelectedNodeId(node.id);
+  }, [setSelectedNodeId]);
 
   const onPaneClick = useCallback(() => {
-    setSelectedNodeData(null);
-  }, []);
+    void setSelectedNodeId(null);
+  }, [setSelectedNodeId]);
 
   const handleUseCaseSelect = useCallback((ucId: string | null) => {
-    setSelectedUseCase(ucId);
+    void setSelectedUseCase(ucId);
   }, [setSelectedUseCase]);
 
   const handleUseCaseClickFromPanel = useCallback((ucId: string) => {
-    setSelectedUseCase(ucId);
-    setSelectedNodeData(null);
-  }, [setSelectedUseCase]);
+    void setSelectedUseCase(ucId);
+    void setSelectedNodeId(null);
+  }, [setSelectedUseCase, setSelectedNodeId]);
 
   if (loading) {
     return (
-      <div className="w-full h-screen flex items-center justify-center text-gray-500">
+      <div className="w-full h-screen flex items-center justify-center" style={{ color: 'var(--color-content-tertiary)', background: 'var(--color-surface-canvas)' }}>
         Loading architecture data...
       </div>
     );
@@ -54,10 +64,10 @@ export default function App() {
 
   if (error) {
     return (
-      <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full h-screen flex items-center justify-center" style={{ background: 'var(--color-surface-canvas)' }}>
         <div className="text-center">
-          <p className="text-red-600 font-semibold mb-2">Failed to load</p>
-          <p className="text-gray-500 text-sm">{error}</p>
+          <p className="font-semibold mb-2" style={{ color: 'var(--color-interactive-primary)' }}>Failed to load</p>
+          <p className="text-sm" style={{ color: 'var(--color-content-tertiary)' }}>{error}</p>
         </div>
       </div>
     );
@@ -73,13 +83,14 @@ export default function App() {
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
+        colorMode={theme}
         fitView
         fitViewOptions={{ padding: 0.15 }}
         minZoom={0.2}
         maxZoom={2}
         proOptions={{ hideAttribution: true }}
       >
-        <Background gap={20} size={1} color="#e5e7eb" />
+        <Background gap={20} size={1} />
         <Controls showInteractive={false} />
         <MiniMap
           nodeColor={(node) => {
@@ -87,7 +98,7 @@ export default function App() {
             return getCategoryColors(data.category).border;
           }}
           maskColor="rgba(0,0,0,0.08)"
-          style={{ border: '1px solid #e5e7eb' }}
+          style={{ border: '1px solid var(--color-border-primary)' }}
         />
       </ReactFlow>
 
@@ -103,22 +114,32 @@ export default function App() {
       </div>
       <Legend categories={categories} />
 
-      {/* Title */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 bg-white/90 backdrop-blur-sm rounded-lg shadow px-4 py-2 border border-gray-200">
-        <h1 className="text-sm font-bold text-gray-800">
-          {projectName} — Architecture
-        </h1>
+      {/* Title + Theme Toggle */}
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+        <div
+          className="backdrop-blur-sm rounded-lg px-4 py-2 border"
+          style={{
+            background: 'color-mix(in srgb, var(--color-surface-primary) 90%, transparent)',
+            borderColor: 'var(--color-border-primary)',
+            boxShadow: 'var(--shadow-panel)',
+          }}
+        >
+          <h1 className="text-sm font-bold" style={{ color: 'var(--color-content-primary)' }}>
+            {projectName} — Architecture
+          </h1>
+        </div>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
       {selectedNodeData && (
         <>
           <div
             className="fixed inset-0 z-40"
-            onClick={() => setSelectedNodeData(null)}
+            onClick={() => void setSelectedNodeId(null)}
           />
           <DetailPanel
             data={selectedNodeData}
-            onClose={() => setSelectedNodeData(null)}
+            onClose={() => void setSelectedNodeId(null)}
             onUseCaseClick={handleUseCaseClickFromPanel}
           />
         </>
