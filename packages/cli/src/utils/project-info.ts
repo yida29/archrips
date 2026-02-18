@@ -13,10 +13,12 @@ export function detectProjectInfo(projectDir: string): { name: string; language:
   const pkgPath = join(projectDir, 'package.json');
   if (existsSync(pkgPath)) {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as Record<string, unknown>;
-    name = (pkg.name as string) ?? '';
+    if (typeof pkg.name === 'string') name = pkg.name;
     language = 'TypeScript/JavaScript';
     // Detect framework from dependencies
-    const deps = { ...(pkg.dependencies as Record<string, string> ?? {}), ...(pkg.devDependencies as Record<string, string> ?? {}) };
+    const rawDeps = typeof pkg.dependencies === 'object' && pkg.dependencies !== null ? pkg.dependencies as Record<string, string> : {};
+    const rawDevDeps = typeof pkg.devDependencies === 'object' && pkg.devDependencies !== null ? pkg.devDependencies as Record<string, string> : {};
+    const deps = { ...rawDeps, ...rawDevDeps };
     if (deps['next']) framework = 'Next.js';
     else if (deps['nuxt']) framework = 'Nuxt';
     else if (deps['@angular/core']) framework = 'Angular';
@@ -32,9 +34,9 @@ export function detectProjectInfo(projectDir: string): { name: string; language:
   const composerPath = join(projectDir, 'composer.json');
   if (existsSync(composerPath)) {
     const composer = JSON.parse(readFileSync(composerPath, 'utf-8')) as Record<string, unknown>;
-    name = name || ((composer.name as string) ?? '');
+    if (!name && typeof composer.name === 'string') name = composer.name;
     language = 'PHP';
-    const require = composer.require as Record<string, string> ?? {};
+    const require = typeof composer.require === 'object' && composer.require !== null ? composer.require as Record<string, string> : {};
     if (require['laravel/framework']) framework = 'Laravel';
     else if (require['symfony/framework-bundle']) framework = 'Symfony';
   }

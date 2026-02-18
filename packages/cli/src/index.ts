@@ -61,6 +61,9 @@ Workflow:
 main().catch((err: unknown) => {
   if (err instanceof Error) {
     console.error(`Error: ${err.message}`);
+    if (process.env['ARCHRIP_DEBUG']) {
+      console.error(err.stack);
+    }
   } else {
     console.error(err);
   }

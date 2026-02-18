@@ -139,7 +139,12 @@ export function validateViewerDir(viewerDir: string): void {
  */
 export function loadAndValidate(filePath: string): { data: ArchitectureData; errors: ValidationError[]; warnings: ValidationError[] } {
   const raw = readFileSync(filePath, 'utf-8');
-  const data = JSON.parse(raw) as ArchitectureData;
+  let data: ArchitectureData;
+  try {
+    data = JSON.parse(raw) as ArchitectureData;
+  } catch {
+    return { data: { version: '', project: { name: '' }, nodes: [], edges: [] }, errors: [{ path: 'root', message: 'Invalid JSON — failed to parse architecture.json' }], warnings: [] };
+  }
   const errors: ValidationError[] = [];
   const warnings: ValidationError[] = [];
 

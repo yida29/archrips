@@ -22,9 +22,10 @@ export async function serve(): Promise<void> {
       stdio: 'inherit',
     });
   } catch (err: unknown) {
-    // Ctrl+C (SIGINT) → status is null, exit silently
-    if (err instanceof Error && 'status' in err && (err as NodeJS.ErrnoException & { status: number | null }).status !== null) {
-      throw new Error('Failed to start preview server.');
+    // Ctrl+C (SIGINT) → exit silently
+    if (err instanceof Error && 'signal' in err && (err as Error & { signal: string | null }).signal === 'SIGINT') {
+      return;
     }
+    throw new Error('Failed to start preview server.');
   }
 }
