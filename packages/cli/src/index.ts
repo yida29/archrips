@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'node:module';
 import { init } from './commands/init.js';
 import { build } from './commands/build.js';
 import { serve } from './commands/serve.js';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json') as { version: string };
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -20,7 +24,7 @@ async function main(): Promise<void> {
       break;
     case '--version':
     case '-v':
-      console.log('archrip v0.1.0');
+      console.log(`archrip v${pkg.version}`);
       break;
     case '--help':
     case '-h':
@@ -48,7 +52,7 @@ Options:
   -h, --help              Show this help
 
 Workflow:
-  1. /archrip:scan               # AI scans codebase → architecture.json
+  1. /archrip-scan               # AI scans codebase → architecture.json
   2. npx archrip build           # Build static HTML viewer (auto-installs viewer)
   3. npx archrip serve           # Preview in browser
 `);
