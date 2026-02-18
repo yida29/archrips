@@ -2,14 +2,38 @@
 
 export type DepthLevel = 0 | 1 | 2;
 
-const CATEGORY_DEPTH: Record<string, DepthLevel> = {
-  controller: 0, external: 0,
-  service: 1, port: 1, job: 1,
-  adapter: 2, model: 2, dto: 2,
-};
+export function computeDepths(nodes: { layer: number }[]): Map<number, DepthLevel> {
+  if (nodes.length === 0) return new Map();
+  const layers = [...new Set(nodes.map(n => n.layer))].sort((a, b) => a - b);
 
-export function getDefaultDepth(category: string): DepthLevel {
-  return CATEGORY_DEPTH[category] ?? 1;
+  const map = new Map<number, DepthLevel>();
+
+  // Flat / workflow: filtering not useful — always show all
+  if (layers.length <= 2) {
+    for (const l of layers) map.set(l, 0);
+    return map;
+  }
+
+  // Exactly 3 layers: 1:1:1 mapping
+  if (layers.length === 3) {
+    map.set(layers[0], 0);
+    map.set(layers[1], 1);
+    map.set(layers[2], 2);
+    return map;
+  }
+
+  // 4+ layers: equal thirds
+  const min = layers[0];
+  const max = layers[layers.length - 1];
+  const range = max - min;
+  const t1 = min + range / 3;
+  const t2 = min + (2 * range) / 3;
+  for (const l of layers) {
+    if (l <= t1) map.set(l, 0);
+    else if (l <= t2) map.set(l, 1);
+    else map.set(l, 2);
+  }
+  return map;
 }
 
 export const DEPTH_LEVELS = [
@@ -95,6 +119,14 @@ export interface TableSchema {
   enumValues?: Record<string, Record<string, string>>;
 }
 
+export interface MemberNodeSummary {
+  id: string;
+  label: string;
+  description: string;
+  filePath: string;
+  sourceUrl: string;
+}
+
 export interface ArchNodeData {
   [key: string]: unknown;
   label: string;
@@ -103,6 +135,7 @@ export interface ArchNodeData {
   description: string;
   filePath: string;
   sourceUrl: string;
+  layer?: number;
   methods?: string[];
   useCases: string[];
   schema?: TableSchema;
@@ -110,6 +143,13 @@ export interface ArchNodeData {
   routes?: string[];
   implements?: string;
   externalService?: string;
+  isGroup?: boolean;
+  memberCount?: number;
+  memberNodes?: MemberNodeSummary[];
+}
+
+export function isGroupNode(data: ArchNodeData): boolean {
+  return data.isGroup === true;
 }
 
 export interface UseCase {

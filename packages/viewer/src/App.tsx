@@ -14,6 +14,7 @@ import '@xyflow/react/dist/style.css';
 import type { ArchFlowNode, ArchNodeData } from './types.ts';
 import { getCategoryColors } from './types.ts';
 import { ArchNode } from './components/nodes/ArchNode.tsx';
+import { GroupNode } from './components/nodes/GroupNode.tsx';
 import { DetailPanel } from './components/DetailPanel.tsx';
 import { UseCaseFilter } from './components/UseCaseFilter.tsx';
 import { DepthFilter } from './components/DepthFilter.tsx';
@@ -24,11 +25,11 @@ import { useDepthFilter } from './hooks/useDepthFilter.ts';
 import { useUseCaseFilter } from './hooks/useUseCaseFilter.ts';
 import { useTheme } from './hooks/useTheme.ts';
 
-const nodeTypes = { archNode: ArchNode };
+const nodeTypes = { archNode: ArchNode, groupNode: GroupNode };
 
 function AppInner() {
-  const { nodes, edges, useCases, projectName, loading, error, onNodesChange, onEdgesChange } = useArchitecture();
-  const { depthLevel, setDepthLevel, visibleNodes, visibleEdges } = useDepthFilter(nodes, edges);
+  const { nodes, edges, useCases, projectName, layoutType, loading, error, onNodesChange, onEdgesChange } = useArchitecture();
+  const { depthLevel, setDepthLevel, visibleNodes, visibleEdges } = useDepthFilter(nodes, edges, layoutType);
   const { selectedUseCase, setSelectedUseCase, categories, filteredNodes, filteredEdges } = useUseCaseFilter(visibleNodes, visibleEdges, useCases);
   const [selectedNodeId, setSelectedNodeId] = useQueryState('node', parseAsString.withOptions({ history: 'replace' }));
   const { theme, toggleTheme } = useTheme();
@@ -36,9 +37,9 @@ function AppInner() {
 
   const selectedNodeData: ArchNodeData | null = useMemo(() => {
     if (!selectedNodeId) return null;
-    const found = nodes.find((n) => n.id === selectedNodeId);
+    const found = visibleNodes.find((n) => n.id === selectedNodeId);
     return found?.data ?? null;
-  }, [selectedNodeId, nodes]);
+  }, [selectedNodeId, visibleNodes]);
 
   const onNodeClick: NodeMouseHandler<ArchFlowNode> = useCallback((_event, node) => {
     void setSelectedNodeId(node.id);

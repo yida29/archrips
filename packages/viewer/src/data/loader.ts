@@ -1,6 +1,6 @@
 import type { Edge } from '@xyflow/react';
 import type { ArchFlowNode, ArchNodeData, UseCase, TableSchema, DepthLevel } from '../types.ts';
-import { getDefaultDepth } from '../types.ts';
+import { computeDepths } from '../types.ts';
 
 interface RawArchData {
   version: string;
@@ -10,6 +10,7 @@ interface RawArchData {
     language?: string;
     framework?: string;
     sourceUrl?: string;
+    layout?: string;
   };
   nodes: RawNode[];
   edges: RawEdge[];
@@ -55,6 +56,7 @@ export interface LoadedArchitecture {
   nodes: ArchFlowNode[];
   edges: Edge[];
   useCases: UseCase[];
+  layoutType: 'dagre' | 'concentric';
 }
 
 function resolveSourceUrl(template: string | undefined, filePath: string): string {
@@ -83,6 +85,8 @@ export async function loadArchitecture(): Promise<LoadedArchitecture> {
   const layout = raw._layout ?? {};
   const sourceUrlTemplate = raw.project.sourceUrl;
 
+  const depthMap = computeDepths(raw.nodes);
+
   // Convert raw nodes to React Flow nodes
   const nodes: ArchFlowNode[] = raw.nodes.map((n) => {
     const pos = layout[n.id] ?? { x: 0, y: 0 };
@@ -91,10 +95,11 @@ export async function loadArchitecture(): Promise<LoadedArchitecture> {
     const data: ArchNodeData = {
       label: n.label,
       category: n.category,
-      depth: (n.depth ?? getDefaultDepth(n.category)) as DepthLevel,
+      depth: (n.depth ?? depthMap.get(n.layer) ?? 1) as DepthLevel,
       description: n.description ?? '',
       filePath: n.filePath ?? '',
       sourceUrl: resolveSourceUrl(sourceUrlTemplate, n.filePath ?? ''),
+      layer: n.layer,
       methods: n.methods,
       routes: n.routes,
       useCases: n.useCases ?? [],
@@ -136,5 +141,6 @@ export async function loadArchitecture(): Promise<LoadedArchitecture> {
     nodes,
     edges,
     useCases,
+    layoutType: raw.project.layout === 'concentric' ? 'concentric' as const : 'dagre' as const,
   };
 }
