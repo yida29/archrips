@@ -24,7 +24,7 @@ npm run test -w packages/cli
 npm run test:watch -w packages/cli
 ```
 
-43テスト: `validate.spec.ts`(36) + `layout.spec.ts`(7)
+64テスト: `validate.spec.ts`(50) + `layout.spec.ts`(14)
 
 ## ローカルテスト
 
@@ -37,11 +37,15 @@ node ~/work/archrip/packages/cli/dist/index.js build   # viewer自動セット�
 node ~/work/archrip/packages/cli/dist/index.js serve
 ```
 
-## npm publish
+## リリース
 
 ```bash
-cd packages/cli && npm run build && npm publish --access public
+./scripts/release.sh          # patch bump → tag push → CI が npm publish
+./scripts/release.sh minor    # minor bump
+./scripts/release.sh major    # major bump
 ```
+
+tag push (`v*`) で GitHub Actions が自動で build → test → npm publish を実行。
 
 ## モノレポ構成
 
@@ -73,7 +77,7 @@ packages/
 - `sourceUrl`: http/httpsプロトコルのみ許可（javascript:/data:/ftp: 拒否）
 - `filePath`: パストラバーサル（`..`）・絶対パス拒否
 - ビューワー検証: シンボリックリンク拒否、マーカーファイル検証、package.json名検証、パス境界チェック
-- 循環依存検出: DAG検証でエッジの循環を検出
+- 循環依存検出: DAG検証でエッジの循環を検出（`relation`タイプは除外）
 
 ## Git Author
 
