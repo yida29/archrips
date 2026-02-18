@@ -4,7 +4,11 @@ import { NuqsAdapter } from 'nuqs/adapters/react'
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+const rootEl = document.getElementById('root');
+if (!rootEl) {
+  throw new Error('Root element #root not found');
+}
+createRoot(rootEl).render(
   <StrictMode>
     <NuqsAdapter>
       <App />

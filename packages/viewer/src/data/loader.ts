@@ -74,12 +74,23 @@ function resolveSourceUrl(template: string | undefined, filePath: string): strin
   }
 }
 
+function clampDepth(value: number): DepthLevel {
+  if (value <= 0) return 0;
+  if (value >= 2) return 2;
+  return 1;
+}
+
 export async function loadArchitecture(): Promise<LoadedArchitecture> {
   const res = await fetch('/architecture.json');
   if (!res.ok) {
     throw new Error(`Failed to fetch architecture.json: ${String(res.status)} ${res.statusText}`);
   }
-  const raw: RawArchData = await res.json();
+  let raw: RawArchData;
+  try {
+    raw = await res.json() as RawArchData;
+  } catch {
+    throw new Error('Failed to parse architecture.json: invalid JSON');
+  }
 
   const schemas = raw.schemas ?? {};
   const layout = raw._layout ?? {};
@@ -95,7 +106,7 @@ export async function loadArchitecture(): Promise<LoadedArchitecture> {
     const data: ArchNodeData = {
       label: n.label,
       category: n.category,
-      depth: (n.depth ?? depthMap.get(n.layer) ?? 1) as DepthLevel,
+      depth: clampDepth(n.depth ?? depthMap.get(n.layer) ?? 1),
       description: n.description ?? '',
       filePath: n.filePath ?? '',
       sourceUrl: resolveSourceUrl(sourceUrlTemplate, n.filePath ?? ''),

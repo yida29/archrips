@@ -9,7 +9,7 @@ import { computeLayout, NODE_WIDTH, NODE_HEIGHT, GROUP_NODE_WIDTH, GROUP_NODE_HE
 function clampDepth(value: number): DepthLevel {
   if (value <= 0) return 0;
   if (value >= 2) return 2;
-  return value as DepthLevel;
+  return 1;
 }
 
 export function useDepthFilter(

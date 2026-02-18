@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { Component, useCallback, useEffect, useMemo } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -160,10 +161,45 @@ function AppInner() {
   );
 }
 
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state: { error: Error | null } = { error: null };
+
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('archrip viewer error:', error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="w-full h-screen flex items-center justify-center" style={{ background: 'var(--color-surface-canvas, #f5f5f5)' }}>
+          <div className="text-center max-w-md px-4">
+            <p className="font-semibold mb-2" style={{ color: 'var(--color-interactive-primary, #e53e3e)' }}>Something went wrong</p>
+            <p className="text-sm mb-4" style={{ color: 'var(--color-content-tertiary, #666)' }}>{this.state.error.message}</p>
+            <button
+              className="text-sm px-4 py-2 rounded border"
+              style={{ borderColor: 'var(--color-border-primary, #ccc)' }}
+              onClick={() => { this.setState({ error: null }); }}
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
-    <ReactFlowProvider>
-      <AppInner />
-    </ReactFlowProvider>
+    <ErrorBoundary>
+      <ReactFlowProvider>
+        <AppInner />
+      </ReactFlowProvider>
+    </ErrorBoundary>
   );
 }
