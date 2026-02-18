@@ -1,6 +1,6 @@
 {
   "name": "archrip",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Generate interactive architecture diagrams from your codebase",
   "author": {
     "name": "Yuto Ida"
