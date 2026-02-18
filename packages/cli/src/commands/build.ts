@@ -64,25 +64,28 @@ export async function build(): Promise<void> {
   if (!existsSync(archJsonPath)) {
     throw new Error(
       '.archrip/architecture.json not found.\n'
-      + 'Run /archrip:scan (or /archrip-scan) to generate it.',
+      + 'Run /archrip-scan to generate it.',
     );
   }
 
-  // 2. Auto-setup viewer if not present
-  if (!existsSync(viewerDir)) {
-    console.log('Setting up viewer...');
-    mkdirSync(archripDir, { recursive: true });
-    installViewer(archripDir);
-    updateGitignore(projectDir);
-  }
+  // 2. Always overwrite viewer to prevent supply-chain attacks
+  console.log('Setting up viewer...');
+  mkdirSync(archripDir, { recursive: true });
+  installViewer(archripDir);
+  updateGitignore(projectDir);
   validateViewerDir(viewerDir);
 
   // 3. Validate architecture.json
   console.log('Validating architecture.json...');
-  const { data, errors } = loadAndValidate(archJsonPath);
+  const { data, errors, warnings } = loadAndValidate(archJsonPath);
   if (errors.length > 0) {
     const details = errors.map((err) => `  - ${err.path}: ${err.message}`).join('\n');
     throw new Error(`Validation errors:\n${details}`);
+  }
+  if (warnings.length > 0) {
+    for (const w of warnings) {
+      console.warn(`  Warning: ${w.path}: ${w.message}`);
+    }
   }
   console.log(`  ${data.nodes.length} nodes, ${data.edges.length} edges, ${data.useCases?.length ?? 0} use cases`);
 
