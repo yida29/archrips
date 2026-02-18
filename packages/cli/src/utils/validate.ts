@@ -258,7 +258,7 @@ export function loadAndValidate(filePath: string): { data: ArchitectureData; err
   if (Array.isArray(data.edges) && nodeIds.size > 0) {
     const adj = new Map<string, string[]>();
     for (const edge of data.edges) {
-      if (edge.source && edge.target) {
+      if (edge.source && edge.target && edge.type !== 'relation') {
         const targets = adj.get(edge.source);
         if (targets) {
           targets.push(edge.target);

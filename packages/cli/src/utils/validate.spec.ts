@@ -390,6 +390,23 @@ describe('loadAndValidate', () => {
       const { errors } = loadAndValidate(filePath);
       expect(errors).toHaveLength(0);
     });
+
+    it('should exclude relation edges from cycle detection', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        nodes: [
+          { id: 'a', category: 'controller', label: 'A', layer: 0 },
+          { id: 'b', category: 'service', label: 'B', layer: 1 },
+          { id: 'c', category: 'dto', label: 'C', layer: 2 },
+        ],
+        edges: [
+          { source: 'a', target: 'b', type: 'dependency' },
+          { source: 'b', target: 'c', type: 'dependency' },
+          { source: 'c', target: 'a', type: 'relation' },
+        ],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toHaveLength(0);
+    });
   });
 });
 
