@@ -43,6 +43,31 @@
 - DDD / Clean Architecture / Hexagonal / Onion Architecture → add `"layout": "concentric"` to `project`
 - MVC / standard layered → `"layout": "dagre"` (default, can be omitted)
 
+## Description & Metadata Guidelines
+
+### Node `description`
+Write 1-3 sentences that explain responsibility AND business context.
+Cross-reference project documentation (README, CLAUDE.md, docs/) for richer context.
+- BAD: "User service" (just echoes the label)
+- BAD: "Handles users" (too vague)
+- GOOD: "Handles user registration, authentication, and profile management. Uses JWT for session tokens; password hashing via bcrypt. Rate-limited to 10 req/s per IP."
+
+### Edge `description`
+Explain WHY the dependency exists, not just THAT it exists.
+- BAD: "calls" / "depends on"
+- GOOD: "Delegates payment processing via Stripe SDK; retries on timeout (3x with exponential backoff)"
+
+### `metadata` for supplementary details
+Use `metadata` to capture information from docs that doesn't fit in `description`:
+```json
+"metadata": [
+  { "label": "SLA", "value": ["99.9% uptime", "p95 < 200ms"], "type": "list" },
+  { "label": "Design Doc", "value": "https://...", "type": "link" },
+  { "label": "Infrastructure", "value": "Lambda + DynamoDB (on-demand)", "type": "text" },
+  { "label": "Rate Limit", "value": "10 req/s per IP", "type": "text" }
+]
+```
+
 ## Schema Rules
 - Include table schema only when migration files or model annotations are available
 - Reference from node data using schema key name

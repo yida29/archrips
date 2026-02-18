@@ -23,9 +23,16 @@ Analyze the current codebase and generate `.archrip/architecture.json`.
 
 ## Phase 2: Documentation Discovery
 Read existing documentation to understand architecture context:
-1. Check for: README.md, CLAUDE.md, docs/, doc/, wiki/, ARCHITECTURE.md, CONTRIBUTING.md
-2. Extract: system overview, component descriptions, external service integrations, design decisions
-3. Use this knowledge to inform the analysis — documentation often reveals architectural intent that code alone does not show (use cases, business context, external dependencies)
+1. Check for: README.md, CLAUDE.md, docs/, doc/, wiki/, ARCHITECTURE.md, CONTRIBUTING.md, ADR/
+2. For each document, extract and take notes on:
+   - **Business context**: What problem does this system solve? Who are the users?
+   - **Component responsibilities**: What each module/service does and why it exists
+   - **Design decisions & constraints**: Why certain patterns/libraries were chosen, known limitations
+   - **Data flow**: How data moves through the system (request lifecycle, event flow, etc.)
+   - **External integrations**: What external services are used, why, and how
+   - **Non-functional requirements**: SLAs, performance targets, security policies
+   - **Deployment & infrastructure**: Hosting, CI/CD, environment details
+3. Keep these notes — you will use them in Phase 4 to write rich node/edge descriptions and metadata
 
 ## Phase 3: Layer Identification
 Based on the framework, identify architectural layers:
@@ -45,6 +52,21 @@ For each layer, read representative files to extract:
 - Dependencies (imports, injections)
 - Public methods/routes
 - Database schemas (from migrations or model definitions)
+
+**Enrich descriptions from documentation:** Cross-reference code with your Phase 2 notes.
+For each component, compose a `description` (1-3 sentences) that covers:
+- **What**: Its responsibility (from code analysis)
+- **Why**: Business context or design rationale (from docs)
+- **How**: Key implementation details, constraints, or patterns worth noting
+
+A good description tells the reader something they cannot see from the label alone.
+- BAD: "User service" (just echoes the label)
+- GOOD: "Handles user registration, login, and profile management. Uses JWT for session tokens with 24h expiry. Password hashing via bcrypt (cost=12)."
+
+Also identify metadata candidates:
+- SLA/performance notes → `metadata` with `type: "list"`
+- Related doc links → `metadata` with `type: "link"`
+- Infrastructure details (Lambda ARN, DB engine, etc.) → `metadata` with `type: "code"` or `"text"`
 
 **Do NOT read every file.** Focus on entry points, core logic, interfaces, and data models.
 
