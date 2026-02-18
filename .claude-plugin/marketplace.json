@@ -9,7 +9,7 @@
       "name": "archrip",
       "source": "./",
       "description": "Generate interactive architecture diagrams from your codebase",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "author": { "name": "Yuto Ida" },
       "homepage": "https://github.com/yida29/archrip",
       "license": "MIT",
