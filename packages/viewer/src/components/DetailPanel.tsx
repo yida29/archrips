@@ -1,4 +1,4 @@
-import type { ArchNodeData, UseCase } from '../types.ts';
+import type { ArchNodeData, UseCase, MetadataEntry } from '../types.ts';
 import { getCategoryColors, getCategoryLabel, isGroupNode } from '../types.ts';
 
 interface DetailPanelProps {
@@ -287,6 +287,13 @@ export function DetailPanel({ data, useCases, onClose, onUseCaseClick }: DetailP
               </Section>
             )}
 
+            {/* Metadata */}
+            {data.metadata && data.metadata.length > 0 && data.metadata.map((entry, i) => (
+              <Section key={i} title={entry.label}>
+                <MetadataValue entry={entry} />
+              </Section>
+            ))}
+
             {/* Use Cases */}
             {data.useCases.length > 0 && (
               <Section title="Use Cases">
@@ -336,4 +343,59 @@ function methodColor(method: string): string {
     case 'DELETE': return 'text-red-600 dark:text-red-400';
     default: return '';
   }
+}
+
+function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function MetadataValue({ entry }: { entry: MetadataEntry }) {
+  const type = entry.type ?? 'text';
+
+  if (type === 'code') {
+    return (
+      <pre
+        className="p-2 rounded text-xs overflow-x-auto whitespace-pre-wrap"
+        style={{ background: 'var(--color-surface-secondary)', color: 'var(--color-content-secondary)' }}
+      >
+        {String(entry.value)}
+      </pre>
+    );
+  }
+
+  if (type === 'link') {
+    const url = String(entry.value);
+    if (!isSafeUrl(url)) {
+      return <span style={{ color: 'var(--color-content-secondary)' }}>{url}</span>;
+    }
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline break-all text-xs"
+        style={{ color: 'var(--color-interactive-primary)' }}
+      >
+        {url}
+      </a>
+    );
+  }
+
+  if (type === 'list' && Array.isArray(entry.value)) {
+    return (
+      <ul className="text-xs space-y-0.5 list-disc list-inside" style={{ color: 'var(--color-content-secondary)' }}>
+        {entry.value.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    );
+  }
+
+  // text (default)
+  return <p style={{ color: 'var(--color-content-secondary)' }}>{String(entry.value)}</p>;
 }

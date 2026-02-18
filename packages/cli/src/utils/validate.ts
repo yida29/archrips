@@ -18,6 +18,12 @@ export interface ArchitectureData {
   schemas?: Record<string, TableSchema>;
 }
 
+export interface MetadataEntry {
+  label: string;
+  value: string | string[];
+  type?: 'text' | 'code' | 'link' | 'list';
+}
+
 export interface ArchNode {
   id: string;
   category: string;
@@ -33,6 +39,7 @@ export interface ArchNode {
   implements?: string;
   externalService?: string;
   sqlExamples?: string[];
+  metadata?: MetadataEntry[];
 }
 
 export interface ArchEdge {
@@ -40,6 +47,8 @@ export interface ArchEdge {
   target: string;
   label?: string | null;
   type?: 'dependency' | 'implements' | 'relation';
+  description?: string;
+  metadata?: MetadataEntry[];
 }
 
 export interface ArchUseCase {
@@ -133,6 +142,31 @@ export function validateViewerDir(viewerDir: string): void {
   }
 }
 
+const VALID_METADATA_TYPES = ['text', 'code', 'link', 'list'];
+
+function validateMetadata(entries: unknown, prefix: string, errors: ValidationError[]): void {
+  if (entries === undefined) return;
+  if (!Array.isArray(entries)) {
+    errors.push({ path: `${prefix}.metadata`, message: 'Must be an array' });
+    return;
+  }
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i] as Record<string, unknown>;
+    const entryPrefix = `${prefix}.metadata[${i}]`;
+    if (!entry.label || typeof entry.label !== 'string') {
+      errors.push({ path: `${entryPrefix}.label`, message: 'Required string' });
+    }
+    if (entry.value === undefined || entry.value === null) {
+      errors.push({ path: `${entryPrefix}.value`, message: 'Required' });
+    } else if (typeof entry.value !== 'string' && !Array.isArray(entry.value)) {
+      errors.push({ path: `${entryPrefix}.value`, message: 'Must be a string or string[]' });
+    }
+    if (entry.type !== undefined && !VALID_METADATA_TYPES.includes(entry.type as string)) {
+      errors.push({ path: `${entryPrefix}.type`, message: `Must be one of: ${VALID_METADATA_TYPES.join(', ')}` });
+    }
+  }
+}
+
 /**
  * Load and validate architecture.json.
  * Does structural validation without requiring ajv (zero extra dependencies).
@@ -198,6 +232,7 @@ export function loadAndValidate(filePath: string): { data: ArchitectureData; err
           errors.push({ path: `${prefix}.filePath`, message: 'Must be a relative path without ".." segments' });
         }
       }
+      validateMetadata(node.metadata, prefix, errors);
       if (node.id && nodeIds.has(node.id)) {
         errors.push({ path: `${prefix}.id`, message: `Duplicate node id: "${node.id}"` });
       }
@@ -222,6 +257,7 @@ export function loadAndValidate(filePath: string): { data: ArchitectureData; err
       if (edge.target && !nodeIds.has(edge.target)) {
         errors.push({ path: `${prefix}.target`, message: `References unknown node: "${edge.target}"` });
       }
+      validateMetadata(edge.metadata, prefix, errors);
     }
   }
 

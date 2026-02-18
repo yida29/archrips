@@ -119,6 +119,13 @@ export interface TableSchema {
   enumValues?: Record<string, Record<string, string>>;
 }
 
+// Keep in sync with packages/cli/src/utils/validate.ts (MetadataEntry)
+export interface MetadataEntry {
+  label: string;
+  value: string | string[];
+  type?: 'text' | 'code' | 'link' | 'list';
+}
+
 export interface MemberNodeSummary {
   id: string;
   label: string;
@@ -143,6 +150,7 @@ export interface ArchNodeData {
   routes?: string[];
   implements?: string;
   externalService?: string;
+  metadata?: MetadataEntry[];
   isGroup?: boolean;
   memberCount?: number;
   memberNodes?: MemberNodeSummary[];

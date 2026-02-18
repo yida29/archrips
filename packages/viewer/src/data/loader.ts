@@ -1,5 +1,5 @@
 import type { Edge } from '@xyflow/react';
-import type { ArchFlowNode, ArchNodeData, UseCase, TableSchema, DepthLevel } from '../types.ts';
+import type { ArchFlowNode, ArchNodeData, UseCase, TableSchema, DepthLevel, MetadataEntry } from '../types.ts';
 import { computeDepths } from '../types.ts';
 
 interface RawArchData {
@@ -34,6 +34,7 @@ interface RawNode {
   externalService?: string;
   sqlExamples?: string[];
   depth?: number;
+  metadata?: MetadataEntry[];
 }
 
 interface RawEdge {
@@ -41,6 +42,8 @@ interface RawEdge {
   target: string;
   label?: string | null;
   type?: string;
+  description?: string;
+  metadata?: MetadataEntry[];
 }
 
 interface RawUseCase {
@@ -118,6 +121,7 @@ export async function loadArchitecture(): Promise<LoadedArchitecture> {
       implements: n.implements,
       externalService: n.externalService,
       sqlExamples: n.sqlExamples,
+      metadata: n.metadata,
     };
 
     return {
@@ -136,6 +140,7 @@ export async function loadArchitecture(): Promise<LoadedArchitecture> {
     label: e.label ?? undefined,
     style: { stroke: 'var(--color-edge-stroke)', strokeWidth: 1.5 },
     type: 'smoothstep',
+    data: { description: e.description, metadata: e.metadata },
   }));
 
   // Convert use cases

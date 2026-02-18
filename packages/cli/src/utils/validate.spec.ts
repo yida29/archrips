@@ -354,6 +354,145 @@ describe('loadAndValidate', () => {
     });
   });
 
+  describe('metadata validation', () => {
+    it('should accept node with all metadata types', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        nodes: [
+          {
+            id: 'a', category: 'service', label: 'A', layer: 0,
+            metadata: [
+              { label: 'Summary', value: 'Some description' },
+              { label: 'ARN', value: 'arn:aws:lambda:...', type: 'code' },
+              { label: 'Docs', value: 'https://example.com', type: 'link' },
+              { label: 'SLA', value: ['99.9%', 'p95 < 200ms'], type: 'list' },
+              { label: 'Default text', value: 'plain', type: 'text' },
+            ],
+          },
+          { id: 'b', category: 'model', label: 'B', layer: 1 },
+        ],
+        edges: [{ source: 'a', target: 'b' }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should accept node with type omitted (defaults to text)', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        nodes: [
+          {
+            id: 'a', category: 'service', label: 'A', layer: 0,
+            metadata: [{ label: 'Note', value: 'hello' }],
+          },
+          { id: 'b', category: 'model', label: 'B', layer: 1 },
+        ],
+        edges: [{ source: 'a', target: 'b' }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should accept node without metadata (backward compatible)', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData());
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should reject metadata entry missing label', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        nodes: [
+          {
+            id: 'a', category: 'service', label: 'A', layer: 0,
+            metadata: [{ value: 'no label' }],
+          },
+          { id: 'b', category: 'model', label: 'B', layer: 1 },
+        ],
+        edges: [{ source: 'a', target: 'b' }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toContainEqual(
+        expect.objectContaining({ path: 'nodes[0].metadata[0].label', message: 'Required string' }),
+      );
+    });
+
+    it('should reject metadata entry missing value', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        nodes: [
+          {
+            id: 'a', category: 'service', label: 'A', layer: 0,
+            metadata: [{ label: 'No value' }],
+          },
+          { id: 'b', category: 'model', label: 'B', layer: 1 },
+        ],
+        edges: [{ source: 'a', target: 'b' }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toContainEqual(
+        expect.objectContaining({ path: 'nodes[0].metadata[0].value', message: 'Required' }),
+      );
+    });
+
+    it('should reject invalid metadata type', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        nodes: [
+          {
+            id: 'a', category: 'service', label: 'A', layer: 0,
+            metadata: [{ label: 'X', value: 'y', type: 'invalid' }],
+          },
+          { id: 'b', category: 'model', label: 'B', layer: 1 },
+        ],
+        edges: [{ source: 'a', target: 'b' }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toContainEqual(
+        expect.objectContaining({ path: 'nodes[0].metadata[0].type', message: expect.stringContaining('Must be one of') }),
+      );
+    });
+
+    it('should reject non-array metadata', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        nodes: [
+          {
+            id: 'a', category: 'service', label: 'A', layer: 0,
+            metadata: 'not-an-array',
+          },
+          { id: 'b', category: 'model', label: 'B', layer: 1 },
+        ],
+        edges: [{ source: 'a', target: 'b' }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toContainEqual(
+        expect.objectContaining({ path: 'nodes[0].metadata', message: 'Must be an array' }),
+      );
+    });
+
+    it('should accept edge with description and metadata', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        edges: [{
+          source: 'a', target: 'b',
+          description: 'Delegates CRUD operations',
+          metadata: [
+            { label: 'SQL', value: 'SELECT * FROM users', type: 'code' },
+          ],
+        }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should reject invalid metadata on edges', () => {
+      const filePath = writeArchJson(tmpDir, minimalArchData({
+        edges: [{
+          source: 'a', target: 'b',
+          metadata: [{ label: 'X' }],
+        }],
+      }));
+      const { errors } = loadAndValidate(filePath);
+      expect(errors).toContainEqual(
+        expect.objectContaining({ path: 'edges[0].metadata[0].value', message: 'Required' }),
+      );
+    });
+  });
+
   describe('circular dependency detection', () => {
     it('should detect circular edges', () => {
       const filePath = writeArchJson(tmpDir, minimalArchData({

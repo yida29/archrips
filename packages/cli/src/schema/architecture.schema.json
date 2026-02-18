@@ -51,6 +51,25 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "metadataEntry": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": { "type": "string" },
+        "value": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": ["text", "code", "link", "list"],
+          "default": "text"
+        }
+      },
+      "additionalProperties": false
+    },
     "node": {
       "type": "object",
       "required": ["id", "category", "label", "layer"],
@@ -68,7 +87,8 @@
         "implements": { "type": "string" },
         "externalService": { "type": "string" },
         "sqlExamples": { "type": "array", "items": { "type": "string" } },
-        "depth": { "type": "integer", "minimum": 0, "maximum": 2, "description": "Abstraction depth: 0=overview, 1=structure, 2=detail. Auto-inferred from layer if omitted." }
+        "depth": { "type": "integer", "minimum": 0, "maximum": 2, "description": "Abstraction depth: 0=overview, 1=structure, 2=detail. Auto-inferred from layer if omitted." },
+        "metadata": { "type": "array", "items": { "$ref": "#/$defs/metadataEntry" }, "description": "Extensible key-value metadata entries" }
       },
       "additionalProperties": false
     },
@@ -83,7 +103,9 @@
           "type": "string",
           "enum": ["dependency", "implements", "relation"],
           "default": "dependency"
-        }
+        },
+        "description": { "type": "string", "description": "Human-readable description of this edge's purpose" },
+        "metadata": { "type": "array", "items": { "$ref": "#/$defs/metadataEntry" }, "description": "Extensible key-value metadata entries" }
       },
       "additionalProperties": false
     },
