@@ -64,11 +64,13 @@ Group related components into user-facing features.
 **IMPORTANT: Do NOT proceed to Phase 8 until the developer responds. You MUST stop here and wait for input.**
 
 Present a summary of what you found:
+- **Documents read**: List all docs you read in Phase 2 (e.g., README.md, CLAUDE.md, docs/architecture.md)
 - List of discovered nodes (grouped by layer/category)
 - List of discovered use cases
 - External services found
 
 Then ask:
+- Are there other documents you should read? (e.g., docs/, wiki/, design docs)
 - Are there missing components, external services, or use cases?
 - Should anything be excluded?
 - `sourceUrl` auto-detected as: `<detected-url>` — correct? (If not detected, ask for the `sourceUrl` template, e.g., `https://github.com/org/repo/blob/main/{filePath}`)
