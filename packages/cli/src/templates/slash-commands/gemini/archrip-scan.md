@@ -102,7 +102,7 @@ Only run this phase AFTER the developer has approved the draft in Phase 7.
 Create `.archrip/` directory if it doesn't exist, then write the complete `.archrip/architecture.json` following the schema, incorporating developer feedback.
 
 After writing the file:
-1. Run `npx archrip serve` in the terminal (auto-builds if needed, opens browser)
+1. Run `npx archrip serve` in the terminal — it auto-builds and opens the browser. **Do NOT run `npx archrip build` separately or open the browser manually** (serve handles everything).
 2. Tell the developer: Run `/archrip-update` to make further adjustments (add/remove nodes, fix relationships, etc.)
 
 ### Required structure (use EXACTLY these field names)
