@@ -49,6 +49,14 @@ DDD / Port & Adapter / Hexagonal:
 - Generic: External → Adapters(Controllers, DB impl) → Application Services → Ports(interfaces) → Domain
 - Note: Ports are interfaces **defined by the domain** — they belong inside, near domain core. Adapters implement Ports from the outside.
 
+CQRS / Event-Driven:
+- CQRS: External → Command Handlers / Query Handlers → Application Services → Domain (Command and Query sides share the same layer structure but separate models)
+- Event Sourcing: External → Command Handlers → Event Store → Projections → Read Models
+- Event-Driven (Motia, Temporal, etc.): External → API Steps → Event Steps → Services → Domain
+
+Modular Monolith:
+- Generic: External → Module APIs (public interfaces) → Module Internal Services → Shared Kernel / Domain
+
 For unlisted frameworks: group by directory responsibility.
 
 ## Phase 4: Read Key Files

@@ -53,9 +53,17 @@ DDD / Clean Architecture / Hexagonal (use `"layout": "concentric"`):
 - Flutter (Clean): External(0) → Data Sources(1) → Repositories(2) → Use Cases(3) → Domain(4)
 - Note: Ports are interfaces **defined by the domain** — they belong near domain core, not at the adapter layer. Adapters implement/use Ports from the outside.
 
+CQRS / Event-Driven:
+- CQRS: External(0) → Command Handlers / Query Handlers(1) → Application Services(2) → Domain(3). Command and Query sides share the same layer structure but separate models
+- Event Sourcing: External(0) → Command Handlers(1) → Event Store(2) → Projections(3) → Read Models(4)
+- Event-Driven (Motia, Temporal, etc.): External(0) → API Steps(1) → Event Steps(2) → Services(3) → Domain(4)
+
 Serverless / Microservices:
 - SST/Lambda: External(0) → API Gateway(1) → Lambda Handlers(2) → Services(3) → Domain(4)
 - Microservices: External(0) → Gateway/BFF(1) → Service Boundaries(2) → Internal Services(3) → Shared Domain(4)
+
+Modular Monolith:
+- Generic: External(0) → Module APIs(1) [public interfaces] → Module Internal Services(2) → Shared Kernel / Domain(3)
 
 For unlisted frameworks: group by directory responsibility and apply the abstract rule above.
 
