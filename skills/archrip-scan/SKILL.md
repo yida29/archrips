@@ -37,14 +37,19 @@ Read existing documentation to understand architecture context:
 ## Phase 3: Layer Identification
 Based on the framework, identify architectural layers:
 
-**Common patterns:**
-- Laravel: Controllers → Services → Ports → Adapters → Models
-- Express/NestJS: Routes/Controllers → Services → Repositories → Models
-- Next.js: Pages → Components → Hooks → API Routes → Services
-- Django: Views → Serializers → Services → Models
-- Spring Boot: Controllers → Services → Repositories → Entities
-- Go: Handlers → Services → Repositories → Models
-- Generic: Group by directory responsibility
+**Common patterns** (→ means "depends on / closer to domain core"):
+MVC / Layered:
+- Laravel: External → Controllers → Services → Models
+- Express/NestJS: External → Routes/Controllers → Services → Repositories → Models
+- Next.js: External → Pages → Components → Hooks/API Routes → Services
+- Django: External → Views → Serializers → Services → Models
+- Spring Boot: External → Controllers → Services → Repositories → Entities
+
+DDD / Port & Adapter / Hexagonal:
+- Generic: External → Adapters(Controllers, DB impl) → Application Services → Ports(interfaces) → Domain Entities
+- Note: Ports are interfaces **defined by the domain** — they belong inside, near domain core. Adapters implement Ports from the outside.
+
+For unlisted frameworks: group by directory responsibility.
 
 ## Phase 4: Read Key Files
 For each layer, read representative files to extract:
