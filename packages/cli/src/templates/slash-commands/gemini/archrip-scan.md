@@ -25,16 +25,31 @@ Read existing documentation to understand architecture context:
 3. Use this knowledge to inform the analysis — documentation often reveals architectural intent that code alone does not show (use cases, business context, external dependencies)
 
 ## Phase 3: Layer Identification
-Based on the framework, identify architectural layers:
+Assign each component a `layer` integer. The rule: **higher layer = closer to domain core (more stable, fewer external dependencies). Lower layer = closer to external world (more volatile, I/O-bound).**
 
-**Common patterns:**
-- Laravel: Controllers → Services → Ports → Adapters → Models
-- Express/NestJS: Routes/Controllers → Services → Repositories → Models
-- Next.js: Pages → Components → Hooks → API Routes → Services
-- Django: Views → Serializers → Services → Models
-- Spring Boot: Controllers → Services → Repositories → Entities
-- Go: Handlers → Services → Repositories → Models
-- Generic: Group by directory responsibility
+Both layouts use this value — dagre places higher layers lower on screen, concentric places them at the center.
+
+**Reference mappings** (layer numbers in parentheses — adapt to actual project structure):
+
+MVC / Layered:
+- Laravel: External(0) → Controllers(1) → Services(2) → Models(3)
+- Rails: External(0) → Controllers(1) → Services(2) → Models(3)
+- Django: External(0) → Views(1) → Serializers(2) → Services(3) → Models(4)
+- Spring Boot: External(0) → Controllers(1) → Services(2) → Repositories(3) → Entities(4)
+- NestJS: External(0) → Controllers(1) → Services(2) → Repositories(3) → Entities(4)
+- Next.js App Router: External(0) → Route Handlers/Pages(1) → Components(2) → Hooks/Services(3) → Data Access(4)
+- FastAPI: External(0) → Routers(1) → Services(2) → Repositories(3) → Models(4)
+
+DDD / Clean Architecture / Hexagonal (use `"layout": "concentric"`):
+- Generic: External(0) → Adapters(1) → Controllers(2) → Application Services(3) → Ports(4) → Domain Entities(5)
+- Go (Hex): External(0) → Handlers(1) → Adapters(2) → Use Cases(3) → Ports(4) → Domain(5)
+- Flutter (Clean): External(0) → Data Sources(1) → Repositories(2) → Use Cases(3) → Entities(4)
+
+Serverless / Microservices:
+- SST/Lambda: External(0) → API Gateway(1) → Lambda Handlers(2) → Services(3) → Domain(4)
+- Microservices: External(0) → Gateway/BFF(1) → Service Boundaries(2) → Internal Services(3) → Shared Domain(4)
+
+For unlisted frameworks: group by directory responsibility and apply the abstract rule above.
 
 ## Phase 4: Read Key Files
 For each layer, read representative files to extract:
@@ -115,11 +130,11 @@ After writing the file:
 
 ### Node Rules
 - `id`: kebab-case, prefixed by category abbreviation (ctrl-, svc-, port-, adpt-, model-, ext-, job-, dto-)
-- `layer`: integer indicating architectural depth (higher = closer to domain core). Concentric layout places high values at center. Example: 0=external, 1=adapters/infrastructure, 2=controllers/entry points, 3=application services, 4=ports/abstractions, 5=domain models/entities
+- `layer`: non-negative integer. **Higher = closer to domain core / more stable. Lower = closer to external world / more volatile.** Dagre (TB) places higher layers lower on screen; concentric places them at center. Use as many layers as the architecture requires (typically 3-6). Example for DDD: 0=external, 1=adapters, 2=controllers, 3=app services, 4=ports, 5=domain entities. Example for MVC: 0=external, 1=controllers, 2=services, 3=models.
 - `category`: one of controller, service, port, adapter, model, external, job, dto (or custom)
 - `label`: display name for the node
 - `filePath`: relative from project root
-- `depth` (optional): 0=overview (boundary), 1=structure (internal), 2=detail (implementation). Auto-inferred from category if omitted
+- `depth` (optional): 0=overview, 1=structure, 2=detail. Auto-inferred from `layer` if omitted: with 3+ unique layers, lowest → 0, middle → 1, highest → 2. With 1-2 layers, all nodes get depth 0 (always visible).
 - `useCases`: array of use case IDs this node participates in
 
 ### Edge Rules

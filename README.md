@@ -108,28 +108,42 @@ Custom categories are supported — they get a fallback color.
 
 ### Depth (Abstraction Level)
 
-The optional `depth` field (0-2) controls which nodes appear at each abstraction level. If omitted, it is auto-inferred from the category:
+The optional `depth` field (0-2) controls which nodes appear at each abstraction level. If omitted, it is auto-inferred from the `layer` distribution:
 
-| Depth | Label | Default Categories |
-|-------|-------|--------------------|
-| 0 | Overview | `controller`, `external` |
-| 1 | Structure | `service`, `port`, `adapter`, `job` |
-| 2 | Detail | `model`, `dto` |
+- **3+ unique layers**: lowest → 0 (overview), middle → 1 (structure), highest → 2 (detail)
+- **1-2 unique layers**: all nodes get depth 0 (always visible — depth filter has no effect)
 
-The viewer provides a 3-level toggle (Overview / Structure / Detail) to show or hide nodes by depth.
+| Depth | Label | Shows |
+|-------|-------|-------|
+| 0 | Overview | Entry points, external boundaries (lowest layers) |
+| 1 | Structure | Core services, business logic (middle layers) |
+| 2 | Detail | Domain models, internal details (highest layers) |
+
+The viewer provides a 3-level toggle (Overview / Structure / Detail) to progressively reveal more nodes.
 
 ### Layers
 
-The `layer` field controls positioning. Higher values = closer to domain core (center in concentric layout, bottom in dagre):
+The `layer` field controls positioning. **Higher = closer to domain core (more stable). Lower = closer to external world (more volatile).** Dagre places higher layers lower on screen; concentric places them at the center. Use as many layers as the architecture requires (any non-negative integer, typically 3-6).
 
-| Layer | Typical Content |
-|-------|----------------|
-| 0 | External services |
+**DDD / Clean Architecture example:**
+
+| Layer | Content |
+|-------|---------|
+| 0 | External services (DB, APIs, queues) |
 | 1 | Adapters / Infrastructure |
 | 2 | Controllers / Entry points |
 | 3 | Application services |
 | 4 | Ports / Abstractions (interfaces) |
-| 5 | Domain models / Entities |
+| 5 | Domain entities |
+
+**MVC example (Rails, Laravel, Django):**
+
+| Layer | Content |
+|-------|---------|
+| 0 | External services |
+| 1 | Controllers / Views |
+| 2 | Services / Business logic |
+| 3 | Models / Entities |
 
 ### Edge Types
 
@@ -141,14 +155,11 @@ The `layer` field controls positioning. Higher values = closer to domain core (c
 
 ## Framework Support
 
-archrip is framework-agnostic. The AI adapts its analysis based on the detected framework:
+archrip is framework-agnostic. The AI adapts its analysis based on the detected framework and architectural pattern:
 
-- **Laravel** — Controllers → Services → Ports → Adapters → Models
-- **Express/NestJS** — Routes/Controllers → Services → Repositories → Models
-- **Next.js** — Pages → Components → API Routes → Services
-- **Django** — Views → Serializers → Services → Models
-- **Spring Boot** — Controllers → Services → Repositories → Entities
-- **Go** — Handlers → Services → Repositories → Models
+- **MVC / Layered** — Laravel, Rails, Django, Spring Boot, NestJS, Next.js, FastAPI
+- **DDD / Clean / Hexagonal** — Go Hexagonal, Flutter Clean, Java DDD, TypeScript DDD
+- **Serverless / Microservices** — SST, Lambda, service mesh architectures
 - Any other — grouped by directory responsibility
 
 ## Viewer Features
