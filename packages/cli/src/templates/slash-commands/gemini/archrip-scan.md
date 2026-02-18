@@ -12,6 +12,11 @@ Analyze the current codebase and generate `.archrip/architecture.json`.
 1. Read top-level files (package.json, composer.json, go.mod, Cargo.toml, pom.xml, pyproject.toml, etc.)
 2. Identify language, framework, source root
 3. List directory structure (2 levels deep)
+4. Auto-detect `sourceUrl`: Run `git remote get-url origin` and convert to browse URL:
+   - `git@github.com:org/repo.git` → `https://github.com/org/repo/blob/main/{filePath}`
+   - `https://github.com/org/repo.git` → `https://github.com/org/repo/blob/main/{filePath}`
+   - `git@gitlab.com:org/repo.git` → `https://gitlab.com/org/repo/-/blob/main/{filePath}`
+   - If no git remote, leave empty (ask in Phase 7)
 
 ## Phase 2: Documentation Discovery
 Read existing documentation to understand architecture context:
@@ -46,6 +51,11 @@ For each component, identify:
 - What depends on it
 - External service connections
 
+**Connectivity check:** After mapping, verify every node has at least one edge. If a node is orphaned:
+- DTOs/entities → connect to the service or adapter that references them
+- External services → connect to the adapter/controller that integrates with them
+- Models → connect to the adapter/repository that queries them
+
 ## Phase 6: Identify Use Cases
 Group related components into user-facing features.
 
@@ -61,7 +71,7 @@ Present a summary of what you found:
 Then ask:
 - Are there missing components, external services, or use cases?
 - Should anything be excluded?
-- What is the `sourceUrl` template? (e.g., `https://github.com/org/repo/blob/main/{filePath}`)
+- `sourceUrl` auto-detected as: `<detected-url>` — correct? (If not detected, ask for the `sourceUrl` template, e.g., `https://github.com/org/repo/blob/main/{filePath}`)
 
 End your message with: **"Please review and reply with corrections, or type 'go' to generate."**
 
@@ -115,6 +125,11 @@ After writing the file, tell the developer:
 - `target`: target node id
 - `type`: dependency | implements | relation
 - Only include significant architectural dependencies (not utility imports)
+- **Every node MUST have at least one edge.** If a node has no obvious dependency, connect it with a `relation` edge to the component that uses or contains it.
+
+### Layout Selection
+- DDD / Clean Architecture / Hexagonal / Onion Architecture → add `"layout": "concentric"` to `project`
+- MVC / standard layered → `"layout": "dagre"` (default, can be omitted)
 
 ### Schema Rules
 - Include table schema only when migration files or model annotations are available
