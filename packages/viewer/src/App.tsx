@@ -149,6 +149,7 @@ function AppInner() {
           />
           <DetailPanel
             data={selectedNodeData}
+            useCases={useCases}
             onClose={() => void setSelectedNodeId(null)}
             onUseCaseClick={handleUseCaseClickFromPanel}
           />

@@ -1,13 +1,14 @@
-import type { ArchNodeData } from '../types.ts';
+import type { ArchNodeData, UseCase } from '../types.ts';
 import { getCategoryColors, getCategoryLabel } from '../types.ts';
 
 interface DetailPanelProps {
   data: ArchNodeData;
+  useCases: UseCase[];
   onClose: () => void;
   onUseCaseClick: (useCaseId: string) => void;
 }
 
-export function DetailPanel({ data, onClose, onUseCaseClick }: DetailPanelProps) {
+export function DetailPanel({ data, useCases, onClose, onUseCaseClick }: DetailPanelProps) {
   const colors = getCategoryColors(data.category);
 
   return (
@@ -214,20 +215,23 @@ export function DetailPanel({ data, onClose, onUseCaseClick }: DetailPanelProps)
         {data.useCases.length > 0 && (
           <Section title="Use Cases">
             <div className="flex flex-wrap gap-1.5">
-              {data.useCases.map((ucId) => (
-                <button
-                  key={ucId}
-                  onClick={() => onUseCaseClick(ucId)}
-                  className="px-2 py-1 rounded text-xs transition-colors cursor-pointer border"
-                  style={{
-                    background: 'var(--color-surface-secondary)',
-                    color: 'var(--color-interactive-primary)',
-                    borderColor: 'var(--color-border-primary)',
-                  }}
-                >
-                  {ucId}
-                </button>
-              ))}
+              {data.useCases.map((ucId) => {
+                const ucName = useCases.find(uc => uc.id === ucId)?.name ?? ucId;
+                return (
+                  <button
+                    key={ucId}
+                    onClick={() => onUseCaseClick(ucId)}
+                    className="px-2 py-1 rounded text-xs transition-colors cursor-pointer border"
+                    style={{
+                      background: 'var(--color-surface-secondary)',
+                      color: 'var(--color-interactive-primary)',
+                      borderColor: 'var(--color-border-primary)',
+                    }}
+                  >
+                    {ucName}
+                  </button>
+                );
+              })}
             </div>
           </Section>
         )}
