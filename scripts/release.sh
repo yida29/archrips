@@ -10,7 +10,8 @@ BUMP="${1:-patch}"
 cd "$(git rev-parse --show-toplevel)"
 CURRENT=$(node -p "require('./packages/cli/package.json').version")
 # Dry-run to preview next version
-NEXT=$(cd packages/cli && npm version "$BUMP" --no-git-tag-version && node -p "require('./package.json').version")
+cd packages/cli && npm version "$BUMP" --no-git-tag-version > /dev/null && cd ../..
+NEXT=$(node -p "require('./packages/cli/package.json').version")
 # Restore to current before confirmation
 npm version "$CURRENT" --no-git-tag-version --allow-same-version -w packages/cli > /dev/null
 
