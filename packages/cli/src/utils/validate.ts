@@ -29,7 +29,6 @@ export interface ArchNode {
   category: string;
   label: string;
   description?: string;
-  depth?: number;
   filePath?: string;
   layer: number;
   methods?: string[];
@@ -223,9 +222,6 @@ export function loadAndValidate(filePath: string): { data: ArchitectureData; err
         errors.push({ path: `${prefix}.layer`, message: 'Must be a number' });
       } else if (!Number.isInteger(node.layer) || node.layer < 0 || node.layer > 100) {
         errors.push({ path: `${prefix}.layer`, message: 'Must be an integer between 0 and 100' });
-      }
-      if (node.depth !== undefined && (node.depth !== 0 && node.depth !== 1 && node.depth !== 2)) {
-        errors.push({ path: `${prefix}.depth`, message: 'Must be 0, 1, or 2' });
       }
       if (node.filePath) {
         if (path.isAbsolute(node.filePath) || node.filePath.split(/[/\\]/).some(seg => seg === '..')) {

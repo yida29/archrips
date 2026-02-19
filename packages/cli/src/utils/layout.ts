@@ -134,8 +134,9 @@ const CATEGORY_RING_PRIORITY: Record<string, number> = {
   controller: 4,
   adapter: 5,
   database: 6,
-  job: 7,
-  external: 8,
+  infrastructure: 7,
+  job: 8,
+  external: 9,
 };
 
 const DEFAULT_RING_PRIORITY = 4; // unknown categories treated as controller-level

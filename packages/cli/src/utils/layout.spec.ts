@@ -396,6 +396,38 @@ describe('computeLayout (concentric)', () => {
     expect(minPortDist).toBeGreaterThan(maxModelDist);
   });
 
+  it('should place infrastructure between database and external', () => {
+    const data = makeData({
+      project: { name: 'test', layout: 'concentric' },
+      nodes: [
+        { id: 'model', category: 'model', label: 'Model', layer: 5 },
+        { id: 'db', category: 'database', label: 'Database', layer: 1 },
+        { id: 'infra', category: 'infrastructure', label: 'Infra', layer: 0 },
+        { id: 'ext', category: 'external', label: 'External', layer: 0 },
+      ],
+      edges: [
+        { source: 'model', target: 'db' },
+        { source: 'db', target: 'infra' },
+        { source: 'infra', target: 'ext' },
+      ],
+    });
+    const result = computeLayout(data);
+
+    const dist = (n: { x: number; y: number; width: number; height: number }) => {
+      const cx = n.x + n.width / 2;
+      const cy = n.y + n.height / 2;
+      return Math.sqrt(cx * cx + cy * cy);
+    };
+
+    const dbNode = result.nodes.find((n) => n.id === 'db')!;
+    const infraNode = result.nodes.find((n) => n.id === 'infra')!;
+    const extNode = result.nodes.find((n) => n.id === 'ext')!;
+
+    // Infrastructure should be between database and external
+    expect(dist(dbNode)).toBeLessThan(dist(infraNode));
+    expect(dist(infraNode)).toBeLessThan(dist(extNode));
+  });
+
   it('should use category priority as primary sort and layer as secondary', () => {
     // Two services with different layers should be on the same ring
     const data = makeData({

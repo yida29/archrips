@@ -248,37 +248,6 @@ describe('loadAndValidate', () => {
       expect(errors).toHaveLength(0);
     });
 
-    it('should reject node.depth outside 0-2 range', () => {
-      const filePath = writeArchJson(tmpDir, minimalArchData({
-        nodes: [
-          { id: 'a', category: 'service', label: 'A', layer: 0, depth: 5 },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
-        ],
-        edges: [{ source: 'a', target: 'b' }],
-      }));
-      const { errors } = loadAndValidate(filePath);
-      expect(errors).toContainEqual(
-        expect.objectContaining({ path: 'nodes[0].depth', message: 'Must be 0, 1, or 2' }),
-      );
-    });
-
-    it('should accept valid node.depth values', () => {
-      const filePath = writeArchJson(tmpDir, minimalArchData({
-        nodes: [
-          { id: 'a', category: 'service', label: 'A', layer: 0, depth: 0 },
-          { id: 'b', category: 'model', label: 'B', layer: 1, depth: 2 },
-        ],
-        edges: [{ source: 'a', target: 'b' }],
-      }));
-      const { errors } = loadAndValidate(filePath);
-      expect(errors).toHaveLength(0);
-    });
-
-    it('should accept node without depth (optional)', () => {
-      const filePath = writeArchJson(tmpDir, minimalArchData());
-      const { errors } = loadAndValidate(filePath);
-      expect(errors).toHaveLength(0);
-    });
   });
 
   describe('edge validation', () => {

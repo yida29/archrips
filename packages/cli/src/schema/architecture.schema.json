@@ -87,7 +87,6 @@
         "implements": { "type": "string" },
         "externalService": { "type": "string" },
         "sqlExamples": { "type": "array", "items": { "type": "string" } },
-        "depth": { "type": "integer", "minimum": 0, "maximum": 2, "description": "Abstraction depth: 0=overview, 1=structure, 2=detail. Auto-inferred from layer if omitted." },
         "metadata": { "type": "array", "items": { "$ref": "#/$defs/metadataEntry" }, "description": "Extensible key-value metadata entries" }
       },
       "additionalProperties": false

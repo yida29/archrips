@@ -54,6 +54,9 @@
   --cat-database-bg: #fef3c7;
   --cat-database-border: #d97706;
   --cat-database-text: #92400e;
+  --cat-infrastructure-bg: #e0e7ff;
+  --cat-infrastructure-border: #6366f1;
+  --cat-infrastructure-text: #3730a3;
   --cat-external-bg: #f3f4f6;
   --cat-external-border: #6b7280;
   --cat-external-text: #374151;
@@ -113,6 +116,9 @@
   --cat-database-bg: #2b1f06;
   --cat-database-border: #fbbf24;
   --cat-database-text: #fde68a;
+  --cat-infrastructure-bg: #1e1b4b;
+  --cat-infrastructure-border: #818cf8;
+  --cat-infrastructure-text: #a5b4fc;
   --cat-external-bg: #1e2330;
   --cat-external-border: #9ca3af;
   --cat-external-text: #d1d5db;
