@@ -120,9 +120,9 @@ function circularMean(angles: number[]): number {
  */
 const CATEGORY_RING_PRIORITY: Record<string, number> = {
   model: 0,
-  port: 1,
-  service: 2,
-  dto: 3,
+  service: 1,
+  dto: 2,
+  port: 3,
   controller: 4,
   adapter: 5,
   database: 6,
@@ -160,6 +160,7 @@ function computeConcentricLayout(
 
   const adjacency = buildAdjacencyMap(edges);
   const placedAngles = new Map<string, number>();
+  let prevRingRadius = 0;
 
   for (let ringIndex = 0; ringIndex < sortedRingKeys.length; ringIndex++) {
     const ringKey = sortedRingKeys[ringIndex]!;
@@ -205,7 +206,9 @@ function computeConcentricLayout(
     const baseRadius = Math.max(ringIndex * RING_SPACING, RING_SPACING / 2);
     const circumference = count * MIN_ARC_SPACING;
     const minRadius = circumference / (2 * Math.PI);
-    const ringRadius = Math.max(minRadius, baseRadius);
+    // Ensure monotonically increasing: each ring must be outside the previous one
+    const ringRadius = Math.max(minRadius, baseRadius, prevRingRadius + RING_SPACING / 2);
+    prevRingRadius = ringRadius;
 
     const angleStep = (2 * Math.PI) / count;
     for (let i = 0; i < count; i++) {
