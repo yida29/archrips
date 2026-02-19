@@ -138,7 +138,9 @@ archrip is framework-agnostic. The AI adapts its analysis based on the detected 
 
 - **MVC / Layered** — Laravel, Rails, Django, Spring Boot, NestJS, Next.js, FastAPI
 - **DDD / Clean / Hexagonal** — Go Hexagonal, Flutter Clean, Java DDD, TypeScript DDD
-- **Serverless / Microservices** — SST, Lambda, service mesh architectures
+- **CQRS / Event-Driven** — CQRS, Event Sourcing, Motia, Temporal
+- **Serverless / Microservices** — SST, Lambda, Terraform, K8s
+- **Modular Monolith** — module-boundary architectures
 - Any other — grouped by directory responsibility
 
 ## Viewer Features
