@@ -326,6 +326,76 @@ describe('computeLayout (concentric)', () => {
     expect(dist(adptNode)).toBeLessThan(dist(extNode));
   });
 
+  it('should place ports between services and adapters (Port & Adapter pattern)', () => {
+    const data = makeData({
+      project: { name: 'test', layout: 'concentric' },
+      nodes: [
+        { id: 'model', category: 'model', label: 'Model', layer: 5 },
+        { id: 'svc', category: 'service', label: 'Service', layer: 2 },
+        { id: 'port', category: 'port', label: 'Port', layer: 3 },
+        { id: 'adpt', category: 'adapter', label: 'Adapter', layer: 4 },
+      ],
+      edges: [
+        { source: 'svc', target: 'port' },
+        { source: 'adpt', target: 'port' },
+        { source: 'port', target: 'model' },
+      ],
+    });
+    const result = computeLayout(data);
+
+    const dist = (n: { x: number; y: number; width: number; height: number }) => {
+      const cx = n.x + n.width / 2;
+      const cy = n.y + n.height / 2;
+      return Math.sqrt(cx * cx + cy * cy);
+    };
+
+    const svcNode = result.nodes.find((n) => n.id === 'svc')!;
+    const portNode = result.nodes.find((n) => n.id === 'port')!;
+    const adptNode = result.nodes.find((n) => n.id === 'adpt')!;
+
+    // Port should be between service and adapter
+    expect(dist(svcNode)).toBeLessThan(dist(portNode));
+    expect(dist(portNode)).toBeLessThan(dist(adptNode));
+  });
+
+  it('should enforce monotonically increasing ring radii even when inner rings have more nodes', () => {
+    // 9 model nodes (large ring) vs 3 port nodes (small ring)
+    // Without monotonic enforcement, model ring radius could exceed port ring radius
+    const modelNodes = Array.from({ length: 9 }, (_, i) => ({
+      id: `model${i}`,
+      category: 'model',
+      label: `Model ${i}`,
+      layer: 5,
+    }));
+    const portNodes = Array.from({ length: 3 }, (_, i) => ({
+      id: `port${i}`,
+      category: 'port',
+      label: `Port ${i}`,
+      layer: 3,
+    }));
+    const data = makeData({
+      project: { name: 'test', layout: 'concentric' },
+      nodes: [...modelNodes, ...portNodes],
+      edges: portNodes.map((p, i) => ({ source: p.id, target: modelNodes[i]!.id })),
+    });
+    const result = computeLayout(data);
+
+    const dist = (n: { x: number; y: number; width: number; height: number }) => {
+      const cx = n.x + n.width / 2;
+      const cy = n.y + n.height / 2;
+      return Math.sqrt(cx * cx + cy * cy);
+    };
+
+    const modelDists = result.nodes.filter((n) => n.id.startsWith('model')).map(dist);
+    const portDists = result.nodes.filter((n) => n.id.startsWith('port')).map(dist);
+
+    const maxModelDist = Math.max(...modelDists);
+    const minPortDist = Math.min(...portDists);
+
+    // All port nodes should be further from center than all model nodes
+    expect(minPortDist).toBeGreaterThan(maxModelDist);
+  });
+
   it('should use category priority as primary sort and layer as secondary', () => {
     // Two services with different layers should be on the same ring
     const data = makeData({
