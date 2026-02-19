@@ -10,25 +10,27 @@ archrip lets Claude Code analyze your codebase and produce a self-contained, int
 
 ## Quick Start
 
+Run these commands in **Claude Code** (the CLI):
+
 ```bash
-# 1. Install the plugin
+# 1. Install the plugin (in Claude Code)
 /plugin marketplace add yida29/archrip
 /plugin install archrip@archrip
 
-# 2. Scan the codebase
+# 2. Scan the codebase (in Claude Code)
 /archrip-scan
 
-# 3. Build & preview
+# 3. Build & preview the viewer
 npx archrip build
 npx archrip serve
 ```
 
 ## How It Works
 
-1. **Install plugin** — `/plugin marketplace add yida29/archrip` registers the plugin, `/plugin install archrip@archrip` installs it
+1. **Install plugin** — Run `/plugin marketplace add yida29/archrip` and `/plugin install archrip@archrip` in Claude Code
 2. **`/archrip-scan`** — Claude reads your codebase and docs, asks you to review the draft, then generates `.archrip/architecture.json`
 3. **`archrip build`** — validates the JSON, auto-installs the viewer if needed, computes layout with dagre, and builds a static React Flow viewer
-4. **`archrip serve`** — serves the built HTML locally for preview
+4. **`archrip serve`** — opens the interactive architecture viewer in your browser
 
 The output is a standalone `dist/` folder you can deploy to GitHub Pages, Netlify, or share as a zip.
 
