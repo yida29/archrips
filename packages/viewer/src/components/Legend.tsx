@@ -10,7 +10,7 @@ interface LegendProps {
 export function Legend({ categories, hiddenCategories, onToggleCategory, onShowAll }: LegendProps) {
   return (
     <div
-      className="absolute bottom-3 right-3 z-10 rounded-lg p-3 border"
+      className="absolute bottom-[140px] right-3 z-10 rounded-lg p-3 border"
       style={{
         background: 'var(--color-surface-primary)',
         borderColor: 'var(--color-border-primary)',
