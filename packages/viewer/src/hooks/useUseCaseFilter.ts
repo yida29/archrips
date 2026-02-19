@@ -6,19 +6,12 @@ import type { ArchFlowNode, UseCase } from '../types.ts';
 import { useFlowAnimation } from './useFlowAnimation.ts';
 
 function isNodeActive(node: ArchFlowNode, activeIds: Set<string>): boolean {
-  if (node.data.isGroup && node.data.memberNodes) {
-    return node.data.memberNodes.some((m) => activeIds.has(m.id));
-  }
   return activeIds.has(node.id);
 }
 
-/** Resolve a node's effective ID for flow matching (group → first active member) */
+/** Resolve a node's effective ID for flow matching */
 function getFlowId(node: ArchFlowNode, flowSet: Set<string>): string | null {
   if (flowSet.has(node.id)) return node.id;
-  if (node.data.isGroup && node.data.memberNodes) {
-    const member = node.data.memberNodes.find((m) => flowSet.has(m.id));
-    if (member) return member.id;
-  }
   return null;
 }
 

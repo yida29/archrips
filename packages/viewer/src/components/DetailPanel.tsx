@@ -1,5 +1,5 @@
 import type { ArchNodeData, UseCase, MetadataEntry } from '../types.ts';
-import { getCategoryColors, getCategoryLabel, isGroupNode } from '../types.ts';
+import { getCategoryColors, getCategoryLabel } from '../types.ts';
 
 interface DetailPanelProps {
   data: ArchNodeData;
@@ -48,82 +48,6 @@ export function DetailPanel({ data, useCases, onClose, onUseCaseClick }: DetailP
       </div>
 
       <div className="p-4 space-y-5 text-sm">
-        {isGroupNode(data) ? (
-          <>
-            {/* Group node: show contained nodes */}
-            <Section title="Contained Nodes">
-              <div className="space-y-2">
-                {data.memberNodes?.map((member) => (
-                  <div
-                    key={member.id}
-                    className="rounded-lg p-3 border"
-                    style={{
-                      background: 'var(--color-surface-secondary)',
-                      borderColor: 'var(--color-border-primary)',
-                    }}
-                  >
-                    <div className="font-semibold text-sm" style={{ color: 'var(--color-content-primary)' }}>
-                      {member.label}
-                    </div>
-                    {member.description && (
-                      <div className="text-xs mt-0.5" style={{ color: 'var(--color-content-secondary)' }}>
-                        {member.description}
-                      </div>
-                    )}
-                    {member.filePath && (
-                      <div className="text-xs mt-1">
-                        {member.sourceUrl ? (
-                          <a
-                            href={member.sourceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline break-all"
-                            style={{ color: 'var(--color-interactive-primary)' }}
-                          >
-                            {member.filePath}
-                          </a>
-                        ) : (
-                          <code
-                            className="px-1 py-0.5 rounded break-all"
-                            style={{ color: 'var(--color-content-tertiary)', background: 'var(--color-surface-primary)' }}
-                          >
-                            {member.filePath}
-                          </code>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </Section>
-
-            {/* Use Cases for group */}
-            {data.useCases.length > 0 && (
-              <Section title="Use Cases">
-                <div className="flex flex-wrap gap-1.5">
-                  {data.useCases.map((ucId) => {
-                    const ucName = useCases.find(uc => uc.id === ucId)?.name ?? ucId;
-                    return (
-                      <button
-                        key={ucId}
-                        onClick={() => onUseCaseClick(ucId)}
-                        className="px-2 py-1 rounded text-xs transition-colors cursor-pointer border"
-                        style={{
-                          background: 'var(--color-surface-secondary)',
-                          color: 'var(--color-interactive-primary)',
-                          borderColor: 'var(--color-border-primary)',
-                        }}
-                      >
-                        {ucName}
-                      </button>
-                    );
-                  })}
-                </div>
-              </Section>
-            )}
-          </>
-        ) : (
-          <>
             {/* Description */}
             {data.description && (
               <Section title="Description">
@@ -318,8 +242,6 @@ export function DetailPanel({ data, useCases, onClose, onUseCaseClick }: DetailP
                 </div>
               </Section>
             )}
-          </>
-        )}
       </div>
     </div>
   );

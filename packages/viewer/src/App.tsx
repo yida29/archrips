@@ -15,27 +15,23 @@ import '@xyflow/react/dist/style.css';
 import type { ArchFlowNode, ArchNodeData } from './types.ts';
 import { getCategoryColors } from './types.ts';
 import { ArchNode } from './components/nodes/ArchNode.tsx';
-import { GroupNode } from './components/nodes/GroupNode.tsx';
 import { CommandPalette } from './components/CommandPalette.tsx';
 import { DetailPanel } from './components/DetailPanel.tsx';
 import { UseCaseFilter } from './components/UseCaseFilter.tsx';
-import { DepthFilter } from './components/DepthFilter.tsx';
 import { Legend } from './components/Legend.tsx';
 import { ThemeToggle } from './components/ThemeToggle.tsx';
 import { useArchitecture } from './hooks/useArchitecture.ts';
 import { useCategoryFilter } from './hooks/useCategoryFilter.ts';
 import { useCommandPalette } from './hooks/useCommandPalette.ts';
-import { useDepthFilter } from './hooks/useDepthFilter.ts';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.ts';
 import { useUseCaseFilter } from './hooks/useUseCaseFilter.ts';
 import { useTheme } from './hooks/useTheme.ts';
 
-const nodeTypes = { archNode: ArchNode, groupNode: GroupNode };
+const nodeTypes = { archNode: ArchNode };
 
 function AppInner() {
-  const { nodes, edges, useCases, projectName, layoutType, loading, error, onNodesChange, onEdgesChange } = useArchitecture();
-  const { depthLevel, setDepthLevel, visibleNodes, visibleEdges } = useDepthFilter(nodes, edges, layoutType);
-  const { selectedUseCase, setSelectedUseCase, categories, filteredNodes, filteredEdges, flowInfo } = useUseCaseFilter(visibleNodes, visibleEdges, useCases);
+  const { nodes, edges, useCases, projectName, loading, error, onNodesChange, onEdgesChange } = useArchitecture();
+  const { selectedUseCase, setSelectedUseCase, categories, filteredNodes, filteredEdges, flowInfo } = useUseCaseFilter(nodes, edges, useCases);
   const categoryFilter = useCategoryFilter();
   const [selectedNodeId, setSelectedNodeId] = useQueryState('node', parseAsString.withOptions({ history: 'replace' }));
   const { theme, toggleTheme } = useTheme();
@@ -43,9 +39,9 @@ function AppInner() {
 
   const selectedNodeData: ArchNodeData | null = useMemo(() => {
     if (!selectedNodeId) return null;
-    const found = visibleNodes.find((n) => n.id === selectedNodeId);
+    const found = nodes.find((n) => n.id === selectedNodeId);
     return found?.data ?? null;
-  }, [selectedNodeId, visibleNodes]);
+  }, [selectedNodeId, nodes]);
 
   const onNodeClick: NodeMouseHandler<ArchFlowNode> = useCallback((_event, node) => {
     void setSelectedNodeId(node.id);
@@ -69,7 +65,7 @@ function AppInner() {
       fitView({ padding: 0.15, duration: 300 });
     });
     return () => cancelAnimationFrame(id);
-  }, [depthLevel, selectedUseCase, fitView]);
+  }, [selectedUseCase, fitView]);
 
   // Auto-center viewport on active flow step
   useEffect(() => {
@@ -192,7 +188,6 @@ function AppInner() {
             flowInfo={flowInfo}
           />
         )}
-        <DepthFilter depthLevel={depthLevel} onSelect={setDepthLevel} />
       </div>
       <Legend
         categories={categories}

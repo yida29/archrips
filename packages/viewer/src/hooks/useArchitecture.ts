@@ -10,7 +10,6 @@ export function useArchitecture() {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [useCases, setUseCases] = useState<UseCase[]>([]);
   const [projectName, setProjectName] = useState('Architecture Viewer');
-  const [layoutType, setLayoutType] = useState<'dagre' | 'concentric'>('dagre');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +20,6 @@ export function useArchitecture() {
         setEdges(arch.edges);
         setUseCases(arch.useCases);
         setProjectName(arch.projectName);
-        setLayoutType(arch.layoutType);
         setLoading(false);
       })
       .catch((err: unknown) => {
@@ -30,5 +28,5 @@ export function useArchitecture() {
       });
   }, [setNodes, setEdges]);
 
-  return { nodes, edges, useCases, projectName, layoutType, loading, error, setNodes, setEdges, onNodesChange, onEdgesChange };
+  return { nodes, edges, useCases, projectName, loading, error, setNodes, setEdges, onNodesChange, onEdgesChange };
 }
