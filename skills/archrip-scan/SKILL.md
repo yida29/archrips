@@ -46,8 +46,8 @@ MVC / Layered:
 - Spring Boot: External → Controllers → Services → Repositories → Domain
 
 DDD / Port & Adapter / Hexagonal:
-- Generic: External → Adapters(Controllers, DB impl) → Application Services → Ports(interfaces) → Domain
-- Note: Ports are interfaces **defined by the domain** — they belong inside, near domain core. Adapters implement Ports from the outside.
+- Generic: External → Adapters(Controllers, DB impl) → Application Core(Use Cases / Application Services + Ports) → Domain
+- Note: Ports are interfaces owned by the **application core** (use-case layer; sometimes placed in domain, but not required). Adapters implement outbound Ports and call inbound Ports — Ports should never live in the adapter layer.
 
 CQRS / Event-Driven:
 - CQRS: External → Command Handlers / Query Handlers → Application Services → Domain (Command and Query sides share the same layer structure but separate models)

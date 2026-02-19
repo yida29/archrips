@@ -48,10 +48,10 @@ MVC / Layered:
 - FastAPI: External(0) → Routers(1) → Services(2) → Repositories(3) → Domain(4)
 
 DDD / Clean Architecture / Hexagonal (use `"layout": "concentric"`):
-- Generic: External(0) → Adapters(1) [Controllers, DB impl, API clients] → Application Services(2) → Ports(3) [domain-defined interfaces] → Domain(4)
-- Go (Hex): External(0) → Adapters(1) [Handlers, Repositories] → Use Cases(2) → Ports(3) → Domain(4)
+- Generic: External(0) → Adapters(1) [Controllers, DB impl, API clients] → Application Core(2) [Use Cases / Application Services, Ports] → Domain(3)
+- Go (Hex): External(0) → Adapters(1) [Handlers, Repositories] → Application Core(2) [Use Cases, Ports] → Domain(3)
 - Flutter (Clean): External(0) → Data Sources(1) → Repositories(2) → Use Cases(3) → Domain(4)
-- Note: Ports are interfaces **defined by the domain** — they belong near domain core, not at the adapter layer. Adapters implement/use Ports from the outside.
+- Note: Ports are interfaces owned by the **application core** (use cases / application services; sometimes placed in domain, but not required). Adapters implement outbound Ports and call inbound Ports. For layering, Ports should be at the same layer as the application core (or 1 step closer to Domain), never at the adapter layer.
 
 CQRS / Event-Driven:
 - CQRS: External(0) → Command Handlers / Query Handlers(1) → Application Services(2) → Domain(3). Command and Query sides share the same layer structure but separate models
@@ -161,7 +161,7 @@ After writing the file:
 
 ### Node Rules
 - `id`: kebab-case, prefixed by category abbreviation (ctrl-, svc-, port-, adpt-, model-, db-, ext-, job-, dto-)
-- `layer`: non-negative integer. **Higher = closer to domain core / more stable. Lower = closer to external world / more volatile.** Dagre (TB) places higher layers lower on screen; concentric places them at center. Use as many layers as the architecture requires (typically 3-6). Example for DDD: 0=external, 1=adapters (controllers + infra), 2=app services, 3=ports, 4=domain. Example for MVC: 0=external, 1=controllers, 2=services, 3=domain.
+- `layer`: non-negative integer. **Higher = closer to domain core / more stable. Lower = closer to external world / more volatile.** Dagre (TB) places higher layers lower on screen; concentric places them at center. Use as many layers as the architecture requires (typically 3-6). Example for DDD/Hex: 0=external, 1=adapters (controllers + infra), 2=application core (use cases/app services + ports), 3=domain. Example for MVC: 0=external, 1=controllers, 2=services, 3=domain.
 - `category`: one of controller, service, port, adapter, model, database, external, job, dto (or custom). Use `model` for domain entities/value objects (core business logic). Use `database` for DB tables, migrations, ORMs, and infrastructure persistence.
 - `label`: display name for the node
 - `description`: 1-3 sentences explaining responsibility + business context. Do NOT just echo the label. Cross-reference documentation for richer context (see Description Guidelines below)

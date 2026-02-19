@@ -25,7 +25,8 @@
 
 ## Node Rules
 - `id`: kebab-case, prefixed by category abbreviation (ctrl-, svc-, port-, adpt-, model-, db-, ext-, job-, dto-)
-- `layer`: 0=external, 1=entry points, 2=application logic, 3=abstractions, 4=implementations, 5=data
+- `layer`: non-negative integer. Higher = closer to domain core. See SKILL.md Phase 3 for framework-specific mappings
+- For Hexagonal/DDD: Ports are interfaces in the application core (often the same layer as use cases/app services); adapters implement them.
 - `category`: one of controller, service, port, adapter, model, database, external, job, dto (or custom). Use `model` for domain entities/value objects (core business logic). Use `database` for DB tables, migrations, ORMs, and infrastructure persistence.
 - `label`: display name for the node
 - `filePath`: relative from project root
