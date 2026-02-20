@@ -111,11 +111,9 @@ The `layer` field controls positioning. **Higher = closer to domain core (more s
 | Layer | Content |
 |-------|---------|
 | 0 | External services (DB, APIs, queues) |
-| 1 | Adapters / Infrastructure |
-| 2 | Controllers / Entry points |
-| 3 | Application services |
-| 4 | Ports / Abstractions (interfaces) |
-| 5 | Domain entities |
+| 1 | Infrastructure / Adapters (Controllers, DB impl, API clients) |
+| 2 | Application Core (Use Cases, Ports, DTOs) |
+| 3 | Domain (Entities, Value Objects) |
 
 **MVC example (Rails, Laravel, Django):**
 
@@ -124,7 +122,9 @@ The `layer` field controls positioning. **Higher = closer to domain core (more s
 | 0 | External services |
 | 1 | Controllers / Views |
 | 2 | Services / Business logic |
-| 3 | Models / Entities |
+| 3 | Entities |
+
+For concentric layout (`"layout": "concentric"`), category semantics override layer numbers to ensure correct ring placement — entities always at center, external always at outer ring.
 
 ### Edge Types
 
@@ -133,6 +133,8 @@ The `layer` field controls positioning. **Higher = closer to domain core (more s
 | `dependency` | Component A depends on B |
 | `implements` | Adapter implements Port/Interface |
 | `relation` | Data relationship (hasMany, belongsTo) |
+
+Edges support optional `description` and `metadata` fields for richer context (e.g., SQL queries on DB edges).
 
 ## Framework Support
 
