@@ -72,7 +72,7 @@ For each layer, read representative files to extract:
 - Component names and purposes
 - Dependencies (imports, injections)
 - Public methods/routes
-- Database schemas (from migrations or model definitions)
+- Database schemas (from migrations or entity definitions)
 - SQL queries / ORM operations (from repositories, DAOs, or query builders)
 
 **Enrich descriptions from documentation:** Cross-reference code with your Phase 2 notes.
@@ -102,12 +102,12 @@ For each component, identify:
 **Connectivity check:** After mapping, verify every node has at least one edge. If a node is orphaned:
 - DTOs/entities → connect to the service or adapter that references them
 - External services → connect to the adapter/controller that integrates with them
-- Entities (model) → connect to the repository/adapter that references them
+- Entities → connect to the repository/adapter that references them
 - Database nodes → connect to the adapter/repository that queries them
 - Infrastructure nodes → connect to the adapter/service they provision
 
 **Edge enrichment — SQL / query details:**
-For edges connecting a service/adapter/repository to a database or model node, include query information:
+For edges connecting a service/adapter/repository to a database or entity node, include query information:
 - `description`: summarize what data operation this edge performs (e.g., "Queries active users by email with JOIN on roles")
 - `metadata`: include representative SQL or ORM queries found in the source code
 
@@ -189,9 +189,9 @@ After writing the file:
 - UseCase: `id`, `name`, `nodeIds` — all required
 
 ### Node Rules
-- `id`: kebab-case, prefixed by category abbreviation (ctrl-, svc-, port-, adpt-, model-, db-, infra-, ext-, job-, dto-)
+- `id`: kebab-case, prefixed by category abbreviation (ctrl-, svc-, port-, adpt-, entity-, db-, infra-, ext-, job-, dto-)
 - `layer`: non-negative integer. **Higher = closer to domain core / more stable. Lower = closer to external world / more volatile.** Dagre (TB) places higher layers lower on screen; concentric places them at center. Use as many layers as the architecture requires (typically 3-6). Example for DDD/Hex: 0=external, 1=adapters (controllers + infra), 2=application core (use cases/app services + ports), 3=domain. Example for MVC: 0=external, 1=controllers, 2=services, 3=domain.
-- `category`: one of controller, service, port, adapter, model, database, infrastructure, external, job, dto (or custom). Use `model` for domain entities/value objects (core business logic). Use `database` for DB tables, migrations, ORMs. Use `infrastructure` for IaC resources (sst.config.ts, Terraform, Pulumi, CloudFormation, etc.)
+- `category`: one of controller, service, port, adapter, entity, database, infrastructure, external, job, dto (or custom). Use `entity` for domain entities/value objects (core business logic). Use `database` for DB tables, migrations, ORMs. Use `infrastructure` for IaC resources (sst.config.ts, Terraform, Pulumi, CloudFormation, etc.)
 - `label`: display name for the node
 - `description`: 1-3 sentences explaining responsibility + business context. Do NOT just echo the label. Cross-reference documentation for richer context (see Description Guidelines below)
 - `filePath`: relative from project root
@@ -244,7 +244,7 @@ Use `metadata` to capture information from docs that doesn't fit in `description
 ```
 
 ### Schema Rules
-- Include table schema only when migration files or model annotations are available
+- Include table schema only when migration files or entity annotations are available
 - Reference from node data using schema key name
 
 $ARGUMENTS

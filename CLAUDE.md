@@ -67,7 +67,7 @@ packages/
 
 - `layer`（整数）のみLLMが出力 → dagreが座標を自動計算（LLMに座標計算させない）
 - `sourceUrl`テンプレート: `{filePath}` プレースホルダーでGitHub/GitLab/Backlog等対応。http/httpsのみ許可
-- 標準カテゴリ10種: controller, service, port, adapter, model, database, infrastructure, external, job, dto。カスタムカテゴリも使用可能（フォールバック色 stone が適用）
+- 標準カテゴリ10種: controller, service, port, adapter, entity, database, infrastructure, external, job, dto。カスタムカテゴリも使用可能（フォールバック色 stone が適用）
 - スラッシュコマンド: `init`時に`.claude/commands/`等にインストール。`shared/` + エージェント固有テンプレート。`$ARGUMENTS`プレースホルダー対応
 - ビューワーはスタンドアロン: ユーザーPJにコピーされるため、workspaceパッケージに依存不可
 

@@ -9,7 +9,7 @@ function makeData(overrides: Partial<ArchitectureData> = {}): ArchitectureData {
     project: { name: 'test', ...project },
     nodes: [
       { id: 'a', category: 'service', label: 'A', layer: 0 },
-      { id: 'b', category: 'model', label: 'B', layer: 1 },
+      { id: 'b', category: 'entity', label: 'B', layer: 1 },
     ],
     edges: [{ source: 'a', target: 'b' }],
     ...rest,
@@ -59,7 +59,7 @@ describe('computeLayout', () => {
     const data = makeData({
       nodes: [
         { id: 'x', category: 'service', label: 'X', layer: 0 },
-        { id: 'y', category: 'model', label: 'Y', layer: 0 },
+        { id: 'y', category: 'entity', label: 'Y', layer: 0 },
       ],
       edges: [],
     });
@@ -108,12 +108,12 @@ describe('computeLayout (concentric)', () => {
         { id: 'ext', category: 'external', label: 'External', layer: 0 },
         { id: 'ctrl', category: 'controller', label: 'Controller', layer: 1 },
         { id: 'svc', category: 'service', label: 'Service', layer: 2 },
-        { id: 'model', category: 'model', label: 'Model', layer: 5 },
+        { id: 'entity', category: 'entity', label: 'Entity', layer: 5 },
       ],
       edges: [
         { source: 'ext', target: 'ctrl' },
         { source: 'ctrl', target: 'svc' },
-        { source: 'svc', target: 'model' },
+        { source: 'svc', target: 'entity' },
       ],
     });
     const result = computeLayout(data);
@@ -124,16 +124,16 @@ describe('computeLayout (concentric)', () => {
       return Math.sqrt(cx * cx + cy * cy);
     };
 
-    const modelNode = result.nodes.find((n) => n.id === 'model')!;
+    const entityNode = result.nodes.find((n) => n.id === 'entity')!;
     const extNode = result.nodes.find((n) => n.id === 'ext')!;
-    expect(dist(modelNode)).toBeLessThan(dist(extNode));
+    expect(dist(entityNode)).toBeLessThan(dist(extNode));
   });
 
   it('should place a single center node at (0, 0)', () => {
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
       nodes: [
-        { id: 'model', category: 'model', label: 'Model', layer: 5 },
+        { id: 'entity', category: 'entity', label: 'Entity', layer: 5 },
       ],
       edges: [],
     });
@@ -200,7 +200,7 @@ describe('computeLayout (concentric)', () => {
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
       nodes: [
-        { id: 'center', category: 'model', label: 'Center', layer: 5 },
+        { id: 'center', category: 'entity', label: 'Center', layer: 5 },
         { id: 'a', category: 'service', label: 'A', layer: 3 },
         { id: 'b', category: 'service', label: 'B', layer: 3 },
         { id: 'c', category: 'service', label: 'C', layer: 3 },
@@ -260,8 +260,8 @@ describe('computeLayout (concentric)', () => {
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
       nodes: [
-        { id: 'inner1', category: 'model', label: 'Inner1', layer: 5 },
-        { id: 'inner2', category: 'model', label: 'Inner2', layer: 5 },
+        { id: 'inner1', category: 'entity', label: 'Inner1', layer: 5 },
+        { id: 'inner2', category: 'entity', label: 'Inner2', layer: 5 },
         { id: 'outer1', category: 'service', label: 'Outer1', layer: 3 },
         { id: 'outer2', category: 'service', label: 'Outer2', layer: 3 },
         { id: 'outer3', category: 'service', label: 'Outer3', layer: 3 },
@@ -292,12 +292,12 @@ describe('computeLayout (concentric)', () => {
     expect(d_o1_o2).toBeLessThan(d_o1_o3);
   });
 
-  it('should place models at center and adapters/external on outer rings even with wrong layer numbers', () => {
-    // Simulate an LLM assigning high layer to adapters and low layer to models
+  it('should place entities at center and adapters/external on outer rings even with wrong layer numbers', () => {
+    // Simulate an LLM assigning high layer to adapters and low layer to entities
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
       nodes: [
-        { id: 'model', category: 'model', label: 'Domain Model', layer: 1 },
+        { id: 'entity', category: 'entity', label: 'Domain Entity', layer: 1 },
         { id: 'svc', category: 'service', label: 'Service', layer: 2 },
         { id: 'adpt', category: 'adapter', label: 'Adapter', layer: 4 },
         { id: 'ext', category: 'external', label: 'External DB', layer: 5 },
@@ -305,7 +305,7 @@ describe('computeLayout (concentric)', () => {
       edges: [
         { source: 'ext', target: 'adpt' },
         { source: 'adpt', target: 'svc' },
-        { source: 'svc', target: 'model' },
+        { source: 'svc', target: 'entity' },
       ],
     });
     const result = computeLayout(data);
@@ -316,12 +316,12 @@ describe('computeLayout (concentric)', () => {
       return Math.sqrt(cx * cx + cy * cy);
     };
 
-    const modelNode = result.nodes.find((n) => n.id === 'model')!;
+    const entityNode = result.nodes.find((n) => n.id === 'entity')!;
     const adptNode = result.nodes.find((n) => n.id === 'adpt')!;
     const extNode = result.nodes.find((n) => n.id === 'ext')!;
 
-    // Model should be closer to center than adapter
-    expect(dist(modelNode)).toBeLessThan(dist(adptNode));
+    // Entity should be closer to center than adapter
+    expect(dist(entityNode)).toBeLessThan(dist(adptNode));
     // Adapter should be closer to center than external
     expect(dist(adptNode)).toBeLessThan(dist(extNode));
   });
@@ -330,7 +330,7 @@ describe('computeLayout (concentric)', () => {
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
       nodes: [
-        { id: 'model', category: 'model', label: 'Model', layer: 5 },
+        { id: 'entity', category: 'entity', label: 'Entity', layer: 5 },
         { id: 'svc', category: 'service', label: 'Service', layer: 2 },
         { id: 'port', category: 'port', label: 'Port', layer: 3 },
         { id: 'adpt', category: 'adapter', label: 'Adapter', layer: 4 },
@@ -338,7 +338,7 @@ describe('computeLayout (concentric)', () => {
       edges: [
         { source: 'svc', target: 'port' },
         { source: 'adpt', target: 'port' },
-        { source: 'port', target: 'model' },
+        { source: 'port', target: 'entity' },
       ],
     });
     const result = computeLayout(data);
@@ -359,12 +359,12 @@ describe('computeLayout (concentric)', () => {
   });
 
   it('should enforce monotonically increasing ring radii even when inner rings have more nodes', () => {
-    // 9 model nodes (large ring) vs 3 port nodes (small ring)
-    // Without monotonic enforcement, model ring radius could exceed port ring radius
-    const modelNodes = Array.from({ length: 9 }, (_, i) => ({
-      id: `model${i}`,
-      category: 'model',
-      label: `Model ${i}`,
+    // 9 entity nodes (large ring) vs 3 port nodes (small ring)
+    // Without monotonic enforcement, entity ring radius could exceed port ring radius
+    const entityNodes = Array.from({ length: 9 }, (_, i) => ({
+      id: `entity${i}`,
+      category: 'entity',
+      label: `Entity ${i}`,
       layer: 5,
     }));
     const portNodes = Array.from({ length: 3 }, (_, i) => ({
@@ -375,8 +375,8 @@ describe('computeLayout (concentric)', () => {
     }));
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
-      nodes: [...modelNodes, ...portNodes],
-      edges: portNodes.map((p, i) => ({ source: p.id, target: modelNodes[i]!.id })),
+      nodes: [...entityNodes, ...portNodes],
+      edges: portNodes.map((p, i) => ({ source: p.id, target: entityNodes[i]!.id })),
     });
     const result = computeLayout(data);
 
@@ -386,27 +386,27 @@ describe('computeLayout (concentric)', () => {
       return Math.sqrt(cx * cx + cy * cy);
     };
 
-    const modelDists = result.nodes.filter((n) => n.id.startsWith('model')).map(dist);
+    const entityDists = result.nodes.filter((n) => n.id.startsWith('entity')).map(dist);
     const portDists = result.nodes.filter((n) => n.id.startsWith('port')).map(dist);
 
-    const maxModelDist = Math.max(...modelDists);
+    const maxEntityDist = Math.max(...entityDists);
     const minPortDist = Math.min(...portDists);
 
-    // All port nodes should be further from center than all model nodes
-    expect(minPortDist).toBeGreaterThan(maxModelDist);
+    // All port nodes should be further from center than all entity nodes
+    expect(minPortDist).toBeGreaterThan(maxEntityDist);
   });
 
   it('should place infrastructure between database and external', () => {
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
       nodes: [
-        { id: 'model', category: 'model', label: 'Model', layer: 5 },
+        { id: 'entity', category: 'entity', label: 'Entity', layer: 5 },
         { id: 'db', category: 'database', label: 'Database', layer: 1 },
         { id: 'infra', category: 'infrastructure', label: 'Infra', layer: 0 },
         { id: 'ext', category: 'external', label: 'External', layer: 0 },
       ],
       edges: [
-        { source: 'model', target: 'db' },
+        { source: 'entity', target: 'db' },
         { source: 'db', target: 'infra' },
         { source: 'infra', target: 'ext' },
       ],
@@ -433,14 +433,14 @@ describe('computeLayout (concentric)', () => {
     const data = makeData({
       project: { name: 'test', layout: 'concentric' },
       nodes: [
-        { id: 'model', category: 'model', label: 'Model', layer: 3 },
+        { id: 'entity', category: 'entity', label: 'Entity', layer: 3 },
         { id: 'svc1', category: 'service', label: 'Service A', layer: 2 },
         { id: 'svc2', category: 'service', label: 'Service B', layer: 2 },
         { id: 'ext', category: 'external', label: 'External', layer: 0 },
       ],
       edges: [
-        { source: 'svc1', target: 'model' },
-        { source: 'svc2', target: 'model' },
+        { source: 'svc1', target: 'entity' },
+        { source: 'svc2', target: 'entity' },
         { source: 'ext', target: 'svc1' },
       ],
     });

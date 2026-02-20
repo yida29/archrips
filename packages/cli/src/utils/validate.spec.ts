@@ -18,7 +18,7 @@ function minimalArchData(overrides: Record<string, unknown> = {}): Record<string
     project: { name: 'test' },
     nodes: [
       { id: 'a', category: 'service', label: 'A', layer: 0 },
-      { id: 'b', category: 'model', label: 'B', layer: 1 },
+      { id: 'b', category: 'entity', label: 'B', layer: 1 },
     ],
     edges: [{ source: 'a', target: 'b' }],
     ...overrides,
@@ -162,7 +162,7 @@ describe('loadAndValidate', () => {
       const filePath = writeArchJson(tmpDir, minimalArchData({
         nodes: [
           { id: 'dup', category: 'service', label: 'A', layer: 0 },
-          { id: 'dup', category: 'model', label: 'B', layer: 1 },
+          { id: 'dup', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [],
       }));
@@ -240,7 +240,7 @@ describe('loadAndValidate', () => {
       const filePath = writeArchJson(tmpDir, minimalArchData({
         nodes: [
           { id: 'svc-users', category: 'service', label: 'A', layer: 0 },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [{ source: 'svc-users', target: 'b' }],
       }));
@@ -305,7 +305,7 @@ describe('loadAndValidate', () => {
       const filePath = writeArchJson(tmpDir, minimalArchData({
         nodes: [
           { id: 'a', category: 'service', label: 'A', layer: 0 },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
           { id: 'c', category: 'dto', label: 'C', layer: 2 },
         ],
         edges: [{ source: 'a', target: 'b' }],
@@ -337,7 +337,7 @@ describe('loadAndValidate', () => {
               { label: 'Default text', value: 'plain', type: 'text' },
             ],
           },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [{ source: 'a', target: 'b' }],
       }));
@@ -352,7 +352,7 @@ describe('loadAndValidate', () => {
             id: 'a', category: 'service', label: 'A', layer: 0,
             metadata: [{ label: 'Note', value: 'hello' }],
           },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [{ source: 'a', target: 'b' }],
       }));
@@ -373,7 +373,7 @@ describe('loadAndValidate', () => {
             id: 'a', category: 'service', label: 'A', layer: 0,
             metadata: [{ value: 'no label' }],
           },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [{ source: 'a', target: 'b' }],
       }));
@@ -390,7 +390,7 @@ describe('loadAndValidate', () => {
             id: 'a', category: 'service', label: 'A', layer: 0,
             metadata: [{ label: 'No value' }],
           },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [{ source: 'a', target: 'b' }],
       }));
@@ -407,7 +407,7 @@ describe('loadAndValidate', () => {
             id: 'a', category: 'service', label: 'A', layer: 0,
             metadata: [{ label: 'X', value: 'y', type: 'invalid' }],
           },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [{ source: 'a', target: 'b' }],
       }));
@@ -424,7 +424,7 @@ describe('loadAndValidate', () => {
             id: 'a', category: 'service', label: 'A', layer: 0,
             metadata: 'not-an-array',
           },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
         ],
         edges: [{ source: 'a', target: 'b' }],
       }));
@@ -467,8 +467,8 @@ describe('loadAndValidate', () => {
       const filePath = writeArchJson(tmpDir, minimalArchData({
         nodes: [
           { id: 'a', category: 'service', label: 'A', layer: 0 },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
-          { id: 'c', category: 'model', label: 'C', layer: 2 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
+          { id: 'c', category: 'entity', label: 'C', layer: 2 },
         ],
         edges: [
           { source: 'a', target: 'b' },
@@ -486,8 +486,8 @@ describe('loadAndValidate', () => {
       const filePath = writeArchJson(tmpDir, minimalArchData({
         nodes: [
           { id: 'a', category: 'service', label: 'A', layer: 0 },
-          { id: 'b', category: 'model', label: 'B', layer: 1 },
-          { id: 'c', category: 'model', label: 'C', layer: 2 },
+          { id: 'b', category: 'entity', label: 'B', layer: 1 },
+          { id: 'c', category: 'entity', label: 'C', layer: 2 },
         ],
         edges: [
           { source: 'a', target: 'b' },

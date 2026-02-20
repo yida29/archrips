@@ -48,9 +48,9 @@
   --cat-adapter-bg: #ffedd5;
   --cat-adapter-border: #f97316;
   --cat-adapter-text: #9a3412;
-  --cat-model-bg: #fee2e2;
-  --cat-model-border: #ef4444;
-  --cat-model-text: #991b1b;
+  --cat-entity-bg: #fee2e2;
+  --cat-entity-border: #ef4444;
+  --cat-entity-text: #991b1b;
   --cat-database-bg: #fef3c7;
   --cat-database-border: #d97706;
   --cat-database-text: #92400e;
@@ -110,9 +110,9 @@
   --cat-adapter-bg: #2b1a0a;
   --cat-adapter-border: #fb923c;
   --cat-adapter-text: #fdba74;
-  --cat-model-bg: #2b1111;
-  --cat-model-border: #f87171;
-  --cat-model-text: #fca5a5;
+  --cat-entity-bg: #2b1111;
+  --cat-entity-border: #f87171;
+  --cat-entity-text: #fca5a5;
   --cat-database-bg: #2b1f06;
   --cat-database-border: #fbbf24;
   --cat-database-text: #fde68a;

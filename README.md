@@ -79,7 +79,7 @@ The output is a standalone `dist/` folder you can deploy to GitHub Pages, Netlif
     {
       "id": "uc-user-mgmt",
       "name": "User Management",
-      "nodeIds": ["ctrl-users", "svc-users", "model-user"]
+      "nodeIds": ["ctrl-users", "svc-users", "entity-user"]
     }
   ]
 }
@@ -93,7 +93,7 @@ The output is a standalone `dist/` folder you can deploy to GitHub Pages, Netlif
 | `service` | Green | Business logic (Service, UseCase) |
 | `port` | Purple | Abstractions (Interface, Contract, Port) |
 | `adapter` | Orange | Implementations (Repository impl, API client) |
-| `model` | Red | Domain entities, value objects (core business logic) |
+| `entity` | Red | Domain entities, value objects (core business logic) |
 | `database` | Amber | DB tables, migrations, ORMs |
 | `infrastructure` | Indigo | IaC resources (Terraform, Pulumi, sst.config.ts, CloudFormation) |
 | `external` | Gray | External services (API, DB, Queue) |

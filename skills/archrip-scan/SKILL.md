@@ -73,7 +73,7 @@ For each layer, read representative files to extract:
 - Component names and purposes
 - Dependencies (imports, injections)
 - Public methods/routes
-- Database schemas (from migrations or model definitions)
+- Database schemas (from migrations or entity definitions)
 - SQL queries / ORM operations (from repositories, DAOs, or query builders)
 
 **Enrich descriptions from documentation:** Cross-reference code with your Phase 2 notes.
@@ -103,12 +103,12 @@ For each component, identify:
 **Connectivity check:** After mapping, verify every node has at least one edge. If a node is orphaned:
 - DTOs/entities → connect to the service or adapter that references them
 - External services → connect to the adapter/controller that integrates with them
-- Entities (model) → connect to the repository/adapter that references them
+- Entities → connect to the repository/adapter that references them
 - Database nodes → connect to the adapter/repository that queries them
 - Infrastructure nodes → connect to the adapter/service they provision
 
 **Edge enrichment — SQL / query details:**
-For edges connecting a service/adapter/repository to a database or model node, include query information:
+For edges connecting a service/adapter/repository to a database or entity node, include query information:
 - `description`: summarize what data operation this edge performs (e.g., "Queries active users by email with JOIN on roles")
 - `metadata`: include representative SQL or ORM queries found in the source code
 

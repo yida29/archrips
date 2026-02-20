@@ -127,7 +127,7 @@ function circularMean(angles: number[]): number {
  * This ensures correct ring placement even when LLMs assign incorrect layer numbers.
  */
 const CATEGORY_RING_PRIORITY: Record<string, number> = {
-  model: 0,
+  entity: 0,
   service: 1,
   dto: 2,
   port: 3,
@@ -155,7 +155,7 @@ function computeRingKey(category: string, layer: number): number {
 /**
  * Concentric (onion) layout for DDD/Clean Architecture.
  * Uses category semantics as the primary ring assignment:
- * model/domain at center, external/adapter on outer rings.
+ * entity/domain at center, external/adapter on outer rings.
  * Layer values serve as secondary sort within the same category ring.
  *
  * Nodes within each ring are ordered using barycenter heuristic:

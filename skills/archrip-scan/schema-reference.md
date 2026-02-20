@@ -24,10 +24,10 @@
 - UseCase: `id`, `name`, `nodeIds` — all required
 
 ## Node Rules
-- `id`: kebab-case, prefixed by category abbreviation (ctrl-, svc-, port-, adpt-, model-, db-, infra-, ext-, job-, dto-)
+- `id`: kebab-case, prefixed by category abbreviation (ctrl-, svc-, port-, adpt-, entity-, db-, infra-, ext-, job-, dto-)
 - `layer`: non-negative integer. Higher = closer to domain core. See SKILL.md Phase 3 for framework-specific mappings
 - For Hexagonal/DDD: Ports are interfaces in the application core (often the same layer as use cases/app services); adapters implement them.
-- `category`: one of controller, service, port, adapter, model, database, infrastructure, external, job, dto (or custom). Use `model` for domain entities/value objects (core business logic). Use `database` for DB tables, migrations, ORMs. Use `infrastructure` for IaC resources (sst.config.ts, Terraform, Pulumi, CloudFormation, etc.)
+- `category`: one of controller, service, port, adapter, entity, database, infrastructure, external, job, dto (or custom). Use `entity` for domain entities/value objects (core business logic). Use `database` for DB tables, migrations, ORMs. Use `infrastructure` for IaC resources (sst.config.ts, Terraform, Pulumi, CloudFormation, etc.)
 - `label`: display name for the node
 - `filePath`: relative from project root
 - `useCases`: array of use case IDs this node participates in
@@ -72,5 +72,5 @@ Use `metadata` to capture information from docs that doesn't fit in `description
 ```
 
 ## Schema Rules
-- Include table schema only when migration files or model annotations are available
+- Include table schema only when migration files or entity annotations are available
 - Reference from node data using schema key name
