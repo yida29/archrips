@@ -1,6 +1,6 @@
 {
   "name": "archrip",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "Generate interactive architecture diagrams from your codebase using AI agents",
   "type": "module",
   "bin": {
